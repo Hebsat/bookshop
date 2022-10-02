@@ -23,9 +23,10 @@ public class AuthorService {
         List<Author> authors = jdbcTemplate.query("SELECT * FROM authors", (ResultSet rs, int rowNum) -> {
                     Author author = new Author();
                     author.setId(rs.getInt("id"));
-                    author.setName(rs.getString("author_name"));
+                    author.setFirstName(rs.getString("first_name"));
+                    author.setLastName(rs.getString("last_name"));
                     return author;
                 });
-        return authors.stream().collect(Collectors.groupingBy(a -> a.getName().substring(0, 1)));
+        return authors.stream().collect(Collectors.groupingBy(a -> a.getLastName().substring(0, 1)));
     }
 }
