@@ -25,7 +25,7 @@
   <div class="Middle">
     <div class="wrap">
       <main class="Middle-main">
-        <h1 class="Middle-title">Авторы
+        <h1 class="Middle-title" th:text="#{bookshop.names.authors}">Авторы
         </h1>
         <div class="Section">
           <div class="Authors">
@@ -41,7 +41,7 @@
               <div class="Authors-letter">
                 <div class="Authors-item" th:each="author : ${authorsList.getValue()}">
                   <a href="/authors/slug.html"
-                     th:href="@{/authors/{authorId} (authorId=${author.id})}"
+                     th:href="@{/authors/{slug} (slug=${author.id})}"
                      th:text="${author.lastName} + ' ' + ${author.firstName}">Author's Name</a>
                 </div>
               </div>

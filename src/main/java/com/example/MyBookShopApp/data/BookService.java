@@ -1,12 +1,14 @@
 package com.example.MyBookShopApp.data;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class BookService {
@@ -31,5 +33,13 @@ public class BookService {
                return book;
           });
           return new ArrayList<>(books);
+     }
+
+     public Book getBook(int id) {
+          Book book = jdbcTemplate.queryForObject("SELECT * FROM books WHERE id = ?",
+                  new Object[]{id},
+                  new BeanPropertyRowMapper<>(Book.class));
+          Logger.getLogger(BookService.class.getName()).info("found book: " + book.toString());
+          return book;
      }
 }

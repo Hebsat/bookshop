@@ -24,6 +24,11 @@ public class SearchController {
         return bookService.getBookData();
     }
 
+    @ModelAttribute("pageTitle")
+    public String pageTitle() {
+        return "bookshop.names.titles.search";
+    }
+
     @GetMapping("/search")
     public String searchPage() {
         return "search/index";

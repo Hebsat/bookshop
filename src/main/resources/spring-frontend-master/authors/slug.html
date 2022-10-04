@@ -24,11 +24,11 @@
   <header th:replace="~{fragments/common_header_fragment :: headerFragment}"></header>
   <div class="Middle">
     <div class="wrap">
-      <main class="Middle-main">
+      <main class="Middle-main" th:object="${author}">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a href="/index.html">Главная</a>
+          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}" th:text="#{bookshop.names.main}">Главная</a>
           </li>
-          <li class="breadcrumbs-item"><a href="/authors/index.html">Авторы</a>
+          <li class="breadcrumbs-item"><a href="/authors/index.html" th:href="@{/authors/}" th:text="#{bookshop.names.authors}">Авторы</a>
           </li>
           <li class="breadcrumbs-item breadcrumbs-item_current"><span>Борис Васильевич Бедный</span>
           </li>
@@ -43,7 +43,7 @@
               <div class="pict pict_left"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
               </div>
               <div>
-                <h2>Биография
+                <h2 th:text="#{bookshop.names.author_page.biography}">Биография
                 </h2>
                 <p>Борис Бедный родился в семье учителя в 1916 году в станице Ярославская Краснодарского края. Окончил Майкопский лесной техникум и был послан учиться в Ленинградскую лесотехническую академию. Стал специалистом по сплаву леса и приехал в Республику Коми, работать на сплавных предприятиях.
                 </p>
@@ -77,7 +77,7 @@
         </article>
         <div class="Section">
           <header class="Section-header">
-            <h2 class="Section-title">Книги автора
+            <h2 class="Section-title" th:text="#{bookshop.names.author_page.author_books}">Книги автора
             </h2>
           </header>
           <div class="Slider Slider_carousel">
@@ -238,7 +238,10 @@
               </div>
             </div>
           </div>
-          <footer class="Section-footer"><a class="Author-books" href="/books/author.html">Все книги автора<span class="Author-amount">(55)</span></a>
+          <footer class="Section-footer">
+            <a class="Author-books" href="/books/author.html"
+               th:href="@{/books/author/{slug} (slug=${author.lastName})}"
+               th:text="#{bookshop.names.author_page.all_author_books} + ' (' + '55' + ')'">Все книги автора<span class="Author-amount">(55)</span></a>
           </footer>
         </div>
       </main>

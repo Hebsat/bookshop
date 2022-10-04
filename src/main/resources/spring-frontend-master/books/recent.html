@@ -26,16 +26,16 @@
     <div class="wrap">
       <main class="Middle-main">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}">Главная</a>
+          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}" th:text="#{bookshop.names.main}">Главная</a>
           </li>
-          <li class="breadcrumbs-item"><a href="/genres/index.html" th:href="@{/genres}">Книги</a>
+          <li class="breadcrumbs-item"><a href="/genres/index.html" th:href="@{/genres}" th:text="#{bookshop.names.books}">Книги</a>
           </li>
-          <li class="breadcrumbs-item breadcrumbs-item_current"><span>Новинки</span>
+          <li class="breadcrumbs-item breadcrumbs-item_current" th:text="#{bookshop.names.recent}"><span>Новинки</span>
           </li>
         </ul>
         <div class="Section">
           <div class="Section-header">
-            <h1 class="Section-title">Новинки
+            <h1 class="Section-title" th:text="#{bookshop.names.recent}">Новинки
             </h1>
             <form class="form form_inline Section-header-form" action="#" method="post">
               <div class="form-group">
@@ -68,7 +68,7 @@
             </div>
             </div>
             <div class="Cards-footer Cards-footer_center">
-              <a class="btn btn_primary" href="#" data-refreshshow="recent" data-refreshoffset="20" data-refreshlimit="20">Показать еще</a>
+              <a class="btn btn_primary" href="#" data-refreshshow="recent" data-refreshoffset="20" data-refreshlimit="20" th:text="#{bookshop.names.buttons.show_more}">Показать еще</a>
             </div>
           </div>
       </main>

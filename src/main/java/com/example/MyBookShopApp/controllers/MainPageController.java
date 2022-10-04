@@ -24,6 +24,16 @@ public class MainPageController {
         return bookService.getBookData();
     }
 
+    @ModelAttribute("topBarIdentifier")
+    public String topBarIdentifier() {
+        return "main";
+    }
+
+    @ModelAttribute("pageTitle")
+    public String pageTitle() {
+        return "bookshop.names.titles.main";
+    }
+
     @GetMapping("/")
     public String mainPage() {
         return "index";

@@ -26,12 +26,12 @@
     <div class="wrap">
       <main class="Middle-main">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}">Главная</a>
+          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}" th:text="#{bookshop.names.main}">Главная</a>
           </li>
-          <li class="breadcrumbs-item breadcrumbs-item_current"><span>О компании</span>
+          <li class="breadcrumbs-item breadcrumbs-item_current" th:text="#{bookshop.names.about}"><span>О компании</span>
           </li>
         </ul>
-        <h1 class="Middle-title">О компании
+        <h1 class="Middle-title" th:text="#{bookshop.names.about}">О компании
         </h1>
         <article class="Article">
           <div class="sdf">
