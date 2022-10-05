@@ -37,7 +37,7 @@ public class AuthorsController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.authors";
+        return "Авторы";
     }
 
     @GetMapping
@@ -45,7 +45,7 @@ public class AuthorsController {
         return "authors/index";
     }
 
-    @GetMapping("/{slug}")
+    @GetMapping("/{slug:.+[^\\.]}")
     public String getAuthor(@PathVariable String slug, Model model) {
         Logger.getLogger(AuthorsController.class.getName()).info("request id: " + slug);
         model.addAttribute("author", authorService.getAuthor(Integer.parseInt(slug)));

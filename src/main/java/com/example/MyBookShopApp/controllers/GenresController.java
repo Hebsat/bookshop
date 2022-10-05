@@ -14,7 +14,7 @@ public class GenresController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.genres";
+        return "Жанры";
     }
 
     @GetMapping("/genres")

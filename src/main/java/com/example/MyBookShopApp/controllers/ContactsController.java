@@ -14,7 +14,7 @@ public class ContactsController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.contacts";
+        return "Наши контакты";
     }
 
     @GetMapping("/contacts")

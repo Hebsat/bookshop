@@ -9,7 +9,7 @@ public class CartController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.cart";
+        return "Корзина userName";
     }
 
     @GetMapping("/cart")

@@ -9,7 +9,7 @@ public class PostponedController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.postponed";
+        return "Отложенные книги";
     }
 
     @GetMapping("/postponed")

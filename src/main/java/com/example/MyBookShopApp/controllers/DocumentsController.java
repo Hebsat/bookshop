@@ -14,7 +14,7 @@ public class DocumentsController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.documents";
+        return "Документы";
     }
 
     @GetMapping("/documents")

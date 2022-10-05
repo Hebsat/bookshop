@@ -14,7 +14,7 @@ public class FaqController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.faq";
+        return "FAQ";
     }
 
     @GetMapping("/faq")

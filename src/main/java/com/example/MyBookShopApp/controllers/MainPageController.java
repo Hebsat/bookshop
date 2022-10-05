@@ -31,7 +31,7 @@ public class MainPageController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.main";
+        return "Добро пожаловать в Bookshop";
     }
 
     @GetMapping("/")

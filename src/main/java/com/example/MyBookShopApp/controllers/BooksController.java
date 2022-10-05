@@ -37,28 +37,30 @@ public class BooksController {
     @GetMapping("/recent")
     public String recentBooksPage(Model model) {
         model.addAttribute("topBarIdentifier", "recent");
-        model.addAttribute("pageTitle", "bookshop.names.titles.recent");
+        model.addAttribute("pageTitle", "Рекомендуемые книги");
         return "books/recent";
     }
 
     @GetMapping("/popular")
     public String popularBooksPage(Model model) {
         model.addAttribute("topBarIdentifier", "popular");
-        model.addAttribute("pageTitle", "bookshop.names.titles.popular");
+        model.addAttribute("pageTitle", "Популярные книги");
         return "books/popular";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d}")
     public String getBook(@PathVariable String id, Model model) {
         Logger.getLogger(AuthorsController.class.getName()).info("request id: " + id);
-        bookService.getBook(Integer.parseInt(id));
+        Book book = bookService.getBook(Integer.parseInt(id));
         model.addAttribute("topBarIdentifier", "genres");
+        model.addAttribute("pageTitle", "Книга " + book.getTitle());
         return "/books/slug";
     }
 
-    @GetMapping("/author/{slug}")
+    @GetMapping("/author/{slug:.+[^\\.]}")
     public String getAuthorBooks(@PathVariable String slug, Model model) {
         model.addAttribute("topBarIdentifier", "genres");
+        model.addAttribute("pageTitle", "Книги автора " + slug);
         return "/books/author";
     }
 }

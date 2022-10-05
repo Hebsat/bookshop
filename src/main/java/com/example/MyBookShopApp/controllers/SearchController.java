@@ -26,7 +26,7 @@ public class SearchController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.search";
+        return "Поиск книг";
     }
 
     @GetMapping("/search")

@@ -14,7 +14,7 @@ public class AboutCompanyController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "bookshop.names.titles.about";
+        return "Информация о компании";
     }
 
     @GetMapping("/about")
