@@ -1,38 +1,85 @@
 package com.example.MyBookShopApp.data;
 
+import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
+@Entity
+@Table(name = "books", indexes = {@Index(name = "books_slug", columnList = "slug", unique = true)})
 public class Book {
 
-    private Integer id;
-    private String author;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(name = "pub_date", nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime publicationDate;
+    @Column(columnDefinition = "SMALLINT", nullable = false)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean isBestseller;
+    @Column(nullable = false)
+    private String slug;
+    @Column(nullable = false)
     private String title;
-    private String priceOld;
-    private String price;
+    private String image;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+    @Column(nullable = false)
+    private Double price;
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int discount;
+
+    @ManyToMany(mappedBy = "bookList")
+    List<Author> authorList;
 
     @Override
     public String toString() {
         return "Book{" +
                 "id=" + id +
-                ", author='" + author + '\'' +
+                ", publicationDate=" + publicationDate +
+                ", isBestseller=" + isBestseller +
+//                ", slug='" + slug + '\'' +
                 ", title='" + title + '\'' +
-                ", priceOld='" + priceOld + '\'' +
+//                ", image='" + image + '\'' +
+//                ", description='" + description + '\'' +
                 ", price='" + price + '\'' +
+                ", discount=" + discount +
+                ", authorList=" + Arrays.toString(authorList.stream().map(Author::getName).toArray()) +
                 '}';
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getAuthor() {
-        return author;
+    public LocalDateTime getPublicationDate() {
+        return publicationDate;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setPublicationDate(LocalDateTime publicationDate) {
+        this.publicationDate = publicationDate;
+    }
+
+    public boolean isBestseller() {
+        return isBestseller;
+    }
+
+    public void setBestseller(boolean bestseller) {
+        isBestseller = bestseller;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public String getTitle() {
@@ -43,19 +90,43 @@ public class Book {
         this.title = title;
     }
 
-    public String getPriceOld() {
-        return priceOld;
+    public String getImage() {
+        return image;
     }
 
-    public void setPriceOld(String priceOld) {
-        this.priceOld = priceOld;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getPrice() {
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    public List<Author> getAuthorList() {
+        return authorList;
+    }
+
+    public void setAuthorList(List<Author> authorList) {
+        this.authorList = authorList;
     }
 }

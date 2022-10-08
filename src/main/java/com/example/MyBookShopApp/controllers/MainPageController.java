@@ -1,7 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.BookService;
+import com.example.MyBookShopApp.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,17 @@ public class MainPageController {
 
     @ModelAttribute("recommendedBooks")
     public List<Book> recommendedBooks() {
-        return bookService.getBookData();
+        return bookService.getBookData().subList(0,20);
+    }
+
+    @ModelAttribute("recentBooks")
+    public List<Book> recentBooks() {
+        return bookService.getRecentBooks().subList(0,20);
+    }
+
+    @ModelAttribute("popularBooks")
+    public List<Book> popularBooks() {
+        return bookService.getPopularBooks().subList(0,20);
     }
 
     @ModelAttribute("topBarIdentifier")
@@ -29,9 +39,14 @@ public class MainPageController {
         return "main";
     }
 
+    @ModelAttribute("pageHeadDescription")
+    public String pageHeadDescription() {
+        return "Over 9 000  книг в магазине Bookshop!";
+    }
+
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "Добро пожаловать в Bookshop";
+        return "main";
     }
 
     @GetMapping("/")

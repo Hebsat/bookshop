@@ -14,7 +14,12 @@ public class FaqController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "FAQ";
+        return "faq";
+    }
+
+    @ModelAttribute("pageHeadDescription")
+    public String pageHeadDescription() {
+        return "Over 9 000  книг в магазине Bookshop!";
     }
 
     @GetMapping("/faq")

@@ -9,7 +9,12 @@ public class AuthorizeController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "Страница авторизации";
+        return "sign_in";
+    }
+
+    @ModelAttribute("pageHeadDescription")
+    public String pageHeadDescription() {
+        return "Over 9 000  книг в магазине Bookshop!";
     }
 
     @GetMapping("/signin")

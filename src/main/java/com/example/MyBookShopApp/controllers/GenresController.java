@@ -14,7 +14,12 @@ public class GenresController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "Жанры";
+        return "genres";
+    }
+
+    @ModelAttribute("pageHeadDescription")
+    public String pageHeadDescription() {
+        return "Over 9 000  книг в магазине Bookshop!";
     }
 
     @GetMapping("/genres")

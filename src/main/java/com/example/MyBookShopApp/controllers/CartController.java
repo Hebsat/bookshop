@@ -9,7 +9,17 @@ public class CartController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "Корзина userName";
+        return "cart";
+    }
+
+    @ModelAttribute("pageTitlePart")
+    public String pageTitlePart() {
+        return "UserName";
+    }
+
+    @ModelAttribute("pageHeadDescription")
+    public String pageHeadDescription() {
+        return "Over 9 000  книг в магазине Bookshop!";
     }
 
     @GetMapping("/cart")

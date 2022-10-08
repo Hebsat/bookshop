@@ -24,28 +24,36 @@
   <header th:replace="~{fragments/common_header_fragment :: headerFragment}"></header>
   <div class="Middle">
     <div class="wrap">
-      <main class="Middle-main">
+      <main class="Middle-main" th:object="${book}">
         <ul class="breadcrumbs">
-          <li class="breadcrumbs-item"><a href="/index.html">Главная</a>
+          <li class="breadcrumbs-item"><a href="/index.html" th:href="@{/}">Главная</a>
           </li>
-          <li class="breadcrumbs-item"><a href="/genres/index.html">Книги</a>
+          <li class="breadcrumbs-item"><a href="/genres/index.html" th:href="@{/genres}">Книги</a>
           </li>
-          <li class="breadcrumbs-item breadcrumbs-item_current"><span>Мара и морок</span>
+          <li class="breadcrumbs-item breadcrumbs-item_current"><span th:text="${book.title}">Мара и морок</span>
           </li>
         </ul>
         <div class="Product">
           <div class="ProductCard">
             <div class="ProductCard-look">
-              <div class="ProductCard-photo"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+              <div class="ProductCard-photo"><img src="/assets/img/content/main/card.jpg" th:src="${book.image}" alt="card.jpg"/>
               </div>
             </div>
             <div class="ProductCard-desc">
               <div class="ProductCard-header">
-                <h1 class="ProductCard-title">Мара и морок
+                <h1 class="ProductCard-title" th:text="${book.title}">Мара и морок
                 </h1>
-                <div class="ProductCard-author"><span class="ProductCard-titleProp">Автор:</span>&#32;<a href="#">Лия Арден</a>
+                <div class="ProductCard-author" th:each="author : ${book.authorList}">
+                  <span class="ProductCard-titleProp"
+                        th:if="${author.id} eq ${book.authorList.get(0).id}"
+                        th:text="${book.authorList.size() gt 1} ?
+                                 #{bookshop.names.book_page.authors} :
+                                 #{bookshop.names.book_page.author}">Автор:</span>&#32;
+                  <a href="#"
+                     th:href="@{/authors/{slug} (slug=${author.slug})}"
+                     th:utext="${author.name}">Лия Арден</a>
                 </div>
-                <div class="ProductCard-rating"><span class="ProductCard-titleProp">Рейтинг:</span>
+                <div class="ProductCard-rating"><span class="ProductCard-titleProp" th:text="#{bookshop.names.book_page.rating}">Рейтинг:</span>
                   <button class="trigger trigger_dropdown" type="button">
                     <div class="Rating Rating_noStyleLink"><span class="Rating-stars"><span class="Rating-star Rating-star_view">
                           <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
@@ -86,7 +94,7 @@
                     </div>
                     <div class="modal modal_compression modal_dropdown">
                       <div class="modal-window"><a class="modal-close" href="#"><span></span><span></span></a>
-                        <strong class="modal-title">Распределение оценок
+                        <strong class="modal-title" th:text="#{bookshop.names.book_page.current_rate}">Распределение оценок
                         </strong>
                         <div class="RatingGroup"><span class="Rating"><span class="Rating-stars"><span class="Rating-star Rating-star_view">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
@@ -269,7 +277,7 @@
                     </div>
                   </button>
                 </div>
-                <div class="ProductCard-assessment"><span class="ProductCard-titleProp">Оцените книгу:</span><span class="Rating Rating_input" data-bookid="2121"><span class="Rating-stars"><span class="Rating-star">
+                <div class="ProductCard-assessment"><span class="ProductCard-titleProp" th:text="#{bookshop.names.book_page.rate_the_book}">Оцените книгу:</span><span class="Rating Rating_input" data-bookid="2121"><span class="Rating-stars"><span class="Rating-star">
                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                           <g>
                             <g>
@@ -311,9 +319,16 @@
                         </svg></span>
                       <input name="rating" type="radio" value="5"/></span></span>
                 </div>
-                <div class="ProductCard-tags"><span class="ProductCard-titleProp">Тэги:</span><a href="/tags/">Современные</a>,&#32;<a href="/tags/">Психологическая проза</a>
+                <div class="ProductCard-tags"><span class="ProductCard-titleProp" th:text="#{bookshop.names.book_page.tags}">Тэги:</span><a href="/tags/">Современные</a>,&#32;<a href="/tags/">Психологическая проза</a>
                 </div>
-                <div class="ProductCard-cost"><span class="ProductCard-titleProp">Цена:</span><span class="ProductCard-priceOld">₽300</span><span class="ProductCard-price">₽180</span>
+                <div class="ProductCard-cost">
+                  <span class="ProductCard-titleProp" th:text="#{bookshop.names.book_page.price} + ' '">Цена:</span>
+                  <span class="ProductCard-priceOld"
+                        th:if="${book.discount gt 0}"
+                        th:text="'₽' + ${#numbers.formatDecimal(book.price, 0, 'WHITESPACE', 2 , 'POINT')}">₽300</span>
+                  <span class="ProductCard-price"
+                        th:with="newPrice=${book.price - book.price * book.discount / 100}"
+                        th:text="'₽' + ${#numbers.formatDecimal(newPrice, 0, 'WHITESPACE', 2, 'POINT')}">₽180</span>
                 </div>
                 <!--+div.-info
                 //+div.-cost
@@ -325,28 +340,36 @@
                 -->
               </div>
               <div class="ProductCard-text">
-                <p>Таких, как я, называют Марами - отмеченными самой богиней смерти Мораной. Когда-то у меня и моих шести сестер был свой путь. Тогда люди нас уважали и просили о милосердии. Они приносили нам подношения и молились нам. Но 200 лет назад все изменилось, когда принц Серата осмелился поднять руку на одну из нас. Я пыталась отомстить, но погибли мы все. Теперь правители Аракена, погрязшие в длительной войне со своим соседом Сератом, решили вернуть меня к жизни. Дать второй шанс на месть и свободу, привязав меня к тому, против кого я никогда не пойду. Таких, как он, называют Морок, и их боятся абсолютно все.
+                <p th:text="${book.description}">Таких, как я, называют Марами - отмеченными самой богиней смерти Мораной. Когда-то у меня и моих шести сестер был свой путь. Тогда люди нас уважали и просили о милосердии. Они приносили нам подношения и молились нам. Но 200 лет назад все изменилось, когда принц Серата осмелился поднять руку на одну из нас. Я пыталась отомстить, но погибли мы все. Теперь правители Аракена, погрязшие в длительной войне со своим соседом Сератом, решили вернуть меня к жизни. Дать второй шанс на месть и свободу, привязав меня к тому, против кого я никогда не пойду. Таких, как он, называют Морок, и их боятся абсолютно все.
                 </p>
               </div>
               <div class="ProductCard-cart">
                 <!--+div.-cartElement.-cartElement_amount-->
                 <!--    +Amount._product-->
                 <div class="ProductCard-cartElement">
-                  <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="Отложена"><span class="btn-icon"><img src="/assets/img/icons/heart.svg" alt="heart.svg"/></span><span class="btn-content">Отложить</span>
+                  <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="Отложена">
+                    <span class="btn-icon"><img src="/assets/img/icons/heart.svg" alt="heart.svg"/></span>
+                    <span class="btn-content"th:text="#{bookshop.names.book_page.postpone}">Отложить</span>
                   </button>
                 </div>
                 <div class="ProductCard-cartElement">
-                  <button class="btn btn_primary btn_outline" data-sendstatus="CART" data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="В корзине"><span class="btn-icon"><img src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/></span><span class="btn-content">Купить</span>
+                  <button class="btn btn_primary btn_outline" data-sendstatus="CART" data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="В корзине">
+                    <span class="btn-icon"><img src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/></span>
+                    <span class="btn-content" th:text="#{bookshop.names.book_page.buy}">Купить</span>
                   </button>
                 </div>
               </div>
               <div class="ProductCard-cart">
                 <!--+div.-cartElement.-cartElement_amount-->
                 <!--    +Amount._product-->
-                <div class="ProductCard-cartElement"><a class="btn btn_primary btn_outline" href="#"><span class="btn-icon"><img src="/assets/img/icons/download.svg" alt="download.svg"/></span><span class="btn-content">Скачать</span></a>
+                <div class="ProductCard-cartElement"><a class="btn btn_primary btn_outline" href="#">
+                  <span class="btn-icon"><img src="/assets/img/icons/download.svg" alt="download.svg"/></span>
+                  <span class="btn-content" th:text="#{bookshop.names.book_page.download}">Скачать</span></a>
                 </div>
                 <div class="ProductCard-cartElement">
-                  <button class="btn btn_primary btn_outline" data-sendstatus="ARCHIVED" data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="Вернуть из архива"><span class="btn-icon"><img src="/assets/img/icons/archive.svg" alt="archive.svg"/></span><span class="btn-content">В архив</span>
+                  <button class="btn btn_primary btn_outline" data-sendstatus="ARCHIVED" data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="Вернуть из архива">
+                    <span class="btn-icon"><img src="/assets/img/icons/archive.svg" alt="archive.svg"/></span>
+                    <span class="btn-content" th:text="#{bookshop.names.book_page.to_archive}">В архив</span>
                   </button>
                 </div>
               </div>
@@ -359,7 +382,7 @@
           </div>
           <div class="Product-comments">
             <div class="Product-comments-header">
-              <h3 class="Product-comments-title">Отзывы
+              <h3 class="Product-comments-title" th:text="#{bookshop.names.book_page.comments}">Отзывы
               </h3><span class="Product-comments-amount">567 отзывов</span>
             </div>
           </div>
@@ -489,7 +512,9 @@
                         <button class="btn btn_white btn_dislike" data-btntype="check" data-check="false" data-btnradio="one1" data-likeid="333"><span class="btn-icon"><img src="/assets/img/icons/comment/dislike.svg" alt="dislike.svg"/></span><span class="btn-content">50</span>
                         </button>
                       </div>
-                      <button class="Spoiler-trigger btn btn_primary btn_nr" type="button" data-showtext="Свернуть отзыв" data-hidetext="Показать отзыв полностью">
+                      <button class="Spoiler-trigger btn btn_primary btn_nr" type="button" data-showtext="Свернуть отзыв" data-hidetext="Показать отзыв полностью"
+                              th:data-showtext="#{bookshop.names.buttons.hide_comment}"
+                              th:data-hidetext="#{bookshop.names.buttons.show_comment}">
                       </button>
                     </div>
                   </div>

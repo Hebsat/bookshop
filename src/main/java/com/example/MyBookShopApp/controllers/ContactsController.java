@@ -14,7 +14,12 @@ public class ContactsController {
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
-        return "Наши контакты";
+        return "contacts";
+    }
+
+    @ModelAttribute("pageHeadDescription")
+    public String pageHeadDescription() {
+        return "Over 9 000  книг в магазине Bookshop!";
     }
 
     @GetMapping("/contacts")

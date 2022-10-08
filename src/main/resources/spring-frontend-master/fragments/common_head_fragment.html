@@ -2,14 +2,14 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <body>
 <head th:fragment="headFragment">
-  <title th:text="${pageTitle}">Тут название страницы написать</title>
-  <meta name="description" content="Описание страницы">
+  <title th:text="#{'bookshop.names.titles.' + ${pageTitle}(${pageTitlePart})}">Название страницы</title>
+  <meta name="description" content="Описание страницы" th:content="${pageHeadDescription}">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
   <!--meta( http-equiv="cache-control" content="no-cache")-->
   <!--meta( http-equiv="expires" content="0")-->
   <!--link(rel="preload" href="assets/css/extra.min.css?v=" + version as="style" crossorigin="anonymous")-->
-  <link href="favicon.ico" rel="shortcut icon">
+  <link href="favicon.ico" type="image/x-icon" rel="shortcut icon">
   <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-SemiBold.woff2" as="font" crossorigin="anonymous">
   <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-Light.woff2" as="font" crossorigin="anonymous">
   <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-Medium.woff2" as="font" crossorigin="anonymous">
