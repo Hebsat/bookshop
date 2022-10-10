@@ -21,7 +21,7 @@ public class SearchController {
 
     @ModelAttribute("searchList")
     public List<Book> searchList() {
-        return bookService.getBookData();
+        return bookService.getBookData().subList(0, 20);
     }
 
     @ModelAttribute("pageTitle")
@@ -31,7 +31,7 @@ public class SearchController {
 
     @ModelAttribute("pageHeadDescription")
     public String pageHeadDescription() {
-        return "Over 9 000  книг в магазине Bookshop!";
+        return "It's over 9000  книг в магазине Bookshop!";
     }
 
     @GetMapping("/search")

@@ -21,17 +21,17 @@ public class MainPageController {
 
     @ModelAttribute("recommendedBooks")
     public List<Book> recommendedBooks() {
-        return bookService.getBookData().subList(0,20);
+        return bookService.getBookData();
     }
 
     @ModelAttribute("recentBooks")
     public List<Book> recentBooks() {
-        return bookService.getRecentBooks().subList(0,20);
+        return bookService.getRecentBooks();
     }
 
     @ModelAttribute("popularBooks")
     public List<Book> popularBooks() {
-        return bookService.getPopularBooks().subList(0,20);
+        return bookService.getPopularBooks();
     }
 
     @ModelAttribute("topBarIdentifier")
@@ -41,7 +41,7 @@ public class MainPageController {
 
     @ModelAttribute("pageHeadDescription")
     public String pageHeadDescription() {
-        return "Over 9 000  книг в магазине Bookshop!";
+        return "It's over 9000  книг в магазине Bookshop!";
     }
 
     @ModelAttribute("pageTitle")

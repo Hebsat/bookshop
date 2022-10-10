@@ -28,20 +28,15 @@ public class AuthorsController {
         return "authors";
     }
 
-//    @ModelAttribute("pageTitle")
-//    public String pageTitle() {
-//        return "authors";
-//    }
-
     @GetMapping
     public String authorsPage(Model model) {
         model.addAttribute("pageTitle", "authors");
-        model.addAttribute("pageHeadDescription", "Over 9 000 авторов...");
+        model.addAttribute("pageHeadDescription", "It's over 9000 авторов...");
         model.addAttribute("authorsMap", authorService.getAuthorData());
         return "authors/index";
     }
 
-    @GetMapping("/{slug:\\w+[^\\.]+}")
+    @GetMapping("/{slug}")
     public String getAuthor(@PathVariable String slug, Model model) {
         Logger.getLogger(AuthorsController.class.getName()).info("request author with slug: " + slug);
         Author author = authorService.getAuthorBySlug(slug);

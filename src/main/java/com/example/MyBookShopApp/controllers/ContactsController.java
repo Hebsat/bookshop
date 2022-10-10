@@ -19,7 +19,7 @@ public class ContactsController {
 
     @ModelAttribute("pageHeadDescription")
     public String pageHeadDescription() {
-        return "Over 9 000  книг в магазине Bookshop!";
+        return "It's over 9000  книг в магазине Bookshop!";
     }
 
     @GetMapping("/contacts")

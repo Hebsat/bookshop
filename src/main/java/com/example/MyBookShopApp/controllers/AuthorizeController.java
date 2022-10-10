@@ -14,7 +14,7 @@ public class AuthorizeController {
 
     @ModelAttribute("pageHeadDescription")
     public String pageHeadDescription() {
-        return "Over 9 000  книг в магазине Bookshop!";
+        return "It's over 9000  книг в магазине Bookshop!";
     }
 
     @GetMapping("/signin")

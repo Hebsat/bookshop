@@ -14,12 +14,11 @@ public class PostponedController {
 
     @ModelAttribute("pageHeadDescription")
     public String pageHeadDescription() {
-        return "Over 9 000  книг в магазине Bookshop!";
+        return "It's over 9000  книг в магазине Bookshop!";
     }
 
     @GetMapping("/postponed")
     public String mainPage() {
-        System.out.println("postponed");
         return "postponed";
     }
 }

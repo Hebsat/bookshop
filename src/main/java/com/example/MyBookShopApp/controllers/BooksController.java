@@ -30,25 +30,25 @@ public class BooksController {
 
     @GetMapping("/recent")
     public String recentBooksPage(Model model) {
-        List<Book> bookList = bookService.getRecentBooks().subList(0, 20);
+        List<Book> bookList = bookService.getRecentBooks();
         model.addAttribute("recentBooks", bookList);
         model.addAttribute("topBarIdentifier", "recent");
         model.addAttribute("pageTitle", "recent");
-        model.addAttribute("pageHeadDescription", "Over 9 000 книг...");
+        model.addAttribute("pageHeadDescription", "It's over 9000 книг...");
         return "books/recent";
     }
 
     @GetMapping("/popular")
     public String popularBooksPage(Model model) {
-        List<Book> bookList = bookService.getPopularBooks().subList(0, 20);
+        List<Book> bookList = bookService.getPopularBooks();
         model.addAttribute("popularBooks", bookList);
         model.addAttribute("topBarIdentifier", "popular");
         model.addAttribute("pageTitle", "popular");
-        model.addAttribute("pageHeadDescription", "Over 9 000 книг...");
+        model.addAttribute("pageHeadDescription", "It's over 9000 книг...");
         return "books/popular";
     }
 
-    @GetMapping("/{slug:\\w+[^\\.]+}")
+    @GetMapping("/{slug}")
     public String getBook(@PathVariable String slug, Model model) {
         Logger.getLogger(BooksController.class.getName()).info("request book with slug: " + slug);
         Book book = bookService.getBookBySlug(slug);
@@ -61,7 +61,7 @@ public class BooksController {
         return "/books/slug";
     }
 
-    @GetMapping("/author/{slug:\\w+[^\\.]+}")
+    @GetMapping("/author/{slug}")
     public String getAuthorBooks(@PathVariable String slug, Model model) {
         Author author = authorService.getAuthorBySlug(slug);
         model.addAttribute("topBarIdentifier", "genres");

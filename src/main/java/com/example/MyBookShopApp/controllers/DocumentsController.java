@@ -1,10 +1,14 @@
 package com.example.MyBookShopApp.controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/documents")
 public class DocumentsController {
 
     @ModelAttribute("topBarIdentifier")
@@ -19,11 +23,17 @@ public class DocumentsController {
 
     @ModelAttribute("pageHeadDescription")
     public String pageHeadDescription() {
-        return "Over 9 000  книг в магазине Bookshop!";
+        return "It's over 9000  книг в магазине Bookshop!";
     }
 
-    @GetMapping("/documents")
-    public String searchPage() {
+    @GetMapping
+    public String documentsPage() {
         return "documents/index";
+    }
+
+    @GetMapping("/{slug}")
+    public String getDocument(@PathVariable String slug, Model model) {
+        model.addAttribute("documentName", "Политика обработки персональных данных");
+        return "documents/slug";
     }
 }

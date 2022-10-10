@@ -6,7 +6,9 @@ import com.example.MyBookShopApp.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,7 +25,7 @@ public class BookService {
 
      public List<Book> getBookData() {
           Logger.getLogger(BookService.class.getName()).info("getBookData started");
-          return bookRepository.findAll();
+          return bookRepository.findAll().subList(0, 20);
      }
 
      public Book getBookBySlug(String slug) {
@@ -38,12 +40,17 @@ public class BookService {
 
      public List<Book> getRecentBooks() {
           Logger.getLogger(BookService.class.getName()).info("getRecentBooks started");
-          return bookRepository.findAllByPublicationDateAfterOrderByPublicationDateDesc(LocalDateTime.of(2022,9,15,0,0));
+          List<Book> bookList = bookRepository
+                  .findAllByPublicationDateAfterAndPublicationDateBeforeOrderByPublicationDateDesc(
+                  LocalDateTime.of(2022,10,1,0,0,0,0).minus(7, ChronoUnit.DAYS),
+                  LocalDateTime.of(2022,10,1,0,0,0,0)
+          );
+          return bookList.subList(0, Math.min(bookList.size(), 20));
      }
 
      public List<Book> getPopularBooks() {
           Logger.getLogger(BookService.class.getName()).info("getPopularBooks started");
           List<Book> bookList = bookRepository.findAllByBestsellerIsTrue();
-          return bookList;
+          return bookList.subList(0, 20);
      }
 }
