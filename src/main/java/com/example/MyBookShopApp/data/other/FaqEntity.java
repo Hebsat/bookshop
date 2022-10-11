@@ -1,9 +1,12 @@
 package com.example.MyBookShopApp.data.other;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "faq")
+@Data
 public class FaqEntity {
 
     @Id
@@ -15,36 +18,4 @@ public class FaqEntity {
     private String question;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String answer;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getSortIndex() {
-        return sortIndex;
-    }
-
-    public void setSortIndex(int sortIndex) {
-        this.sortIndex = sortIndex;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
 }

@@ -1,9 +1,12 @@
 package com.example.MyBookShopApp.data.book.links;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "book2genre")
+@Data
 public class Book2GenreEntity {
 
     @Id
@@ -13,28 +16,4 @@ public class Book2GenreEntity {
     private int bookId;
     @Column(nullable = false)
     private int genreId;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
-    }
-
-    public int getGenreId() {
-        return genreId;
-    }
-
-    public void setGenreId(int genreId) {
-        this.genreId = genreId;
-    }
 }

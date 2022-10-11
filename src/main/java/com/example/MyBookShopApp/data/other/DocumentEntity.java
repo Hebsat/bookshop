@@ -1,9 +1,12 @@
 package com.example.MyBookShopApp.data.other;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "documents")
+@Data
 public class DocumentEntity {
 
     @Id
@@ -17,44 +20,4 @@ public class DocumentEntity {
     private String title;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String text;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getSortIndex() {
-        return sortIndex;
-    }
-
-    public void setSortIndex(int sortIndex) {
-        this.sortIndex = sortIndex;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
 }

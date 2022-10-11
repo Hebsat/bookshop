@@ -1,9 +1,12 @@
 package com.example.MyBookShopApp.data.book.file;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "book_file_types")
+@Data
 public class BookFileTypeEntity {
 
     @Id
@@ -13,37 +16,4 @@ public class BookFileTypeEntity {
     private String name;
     @Column(columnDefinition = "TEXT")
     private String description;
-
-    @Override
-    public String toString() {
-        return "BookFileType{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

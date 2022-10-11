@@ -51,7 +51,7 @@
                                  #{bookshop.names.book_page.author}">Автор:</span>&#32;
                   <a href="#"
                      th:href="@{/authors/{slug} (slug=${author.slug})}"
-                     th:utext="${author.name}">Лия Арден</a>
+                     th:text="${author.name}">Лия Арден</a>
                 </div>
                 <div class="ProductCard-rating"><span class="ProductCard-titleProp" th:text="#{bookshop.names.book_page.rating}">Рейтинг:</span>
                   <button class="trigger trigger_dropdown" type="button">
