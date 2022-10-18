@@ -21,7 +21,7 @@ public class SearchController {
 
     @ModelAttribute("searchList")
     public List<Book> searchList() {
-        return bookService.getBookData().subList(0, 20);
+        return bookService.getBookData(0, 7).getContent();
     }
 
     @ModelAttribute("pageTitle")

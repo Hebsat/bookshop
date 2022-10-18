@@ -3,7 +3,7 @@
 <body>
 <div  th:fragment="bookFragment">
   <a class="Card-picture" href="/books/slug.html" th:href="@{/books/{bookSlug} (bookSlug=${book.slug})}">
-    <img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+    <img src="/assets/img/content/main/card.jpg" th:src="${book.image}" alt="card.jpg"/>
     <div class="Card-sale" th:if="${book.discount gt 0}" th:text="${book.discount} + #{bookshop.names.book.sale}">30% скидка
     </div>
     <div class="Card-ribbon" th:if="${book.bestseller}">
@@ -21,11 +21,11 @@
   </a>
   <div class="Card-content">
     <strong class="Card-title">
-      <a href="/books/slug.html" th:href="@{/books/{bookSlug} (bookSlug=${book.slug})}" th:text="${book.title}">Техника</a>
+      <a href="/books/slug.html" th:href="@{/books/{bookSlug} (bookSlug=${book.slug})}" th:text="${book.title}">Book title</a>
     </strong>
     <div class="Card-description"
          th:each="author : ${book.authorList}"
-         th:text="${author.name}">Кондратенко Александр Петрович
+         th:text="${author.name}">Author's name
     </div>
     <div class="Card-cost">
       <span class="Card-priceOld"

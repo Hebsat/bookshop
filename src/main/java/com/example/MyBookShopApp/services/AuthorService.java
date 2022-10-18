@@ -30,7 +30,7 @@ public class AuthorService {
         return authorRepository.findBySlug(slug);
     }
 
-    public Author getAuthor(int id) {
+    public Author getAuthorById(int id) {
         Logger.getLogger(AuthorService.class.getName()).info("getAuthorById with id: " + id);
         return authorRepository.findById(id).get();
     }

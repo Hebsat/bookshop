@@ -46,14 +46,14 @@
                 <h2 th:text="#{bookshop.names.author_page.biography}">Биография
                 </h2>
                 <p th:each="offset : ${author.description.length() gt 500} ?
-                                      ${#strings.arraySplit(author.description.substring(0, 500) + '...', '&#10')} :
-                                      ${#strings.arraySplit(author.description, '&#10')}"
+                                     ${#strings.arraySplit(author.description.substring(0, 500) + '...', '&#10')} :
+                                     ${#strings.arraySplit(author.description, '&#10')}"
                    th:text="${offset}">Биография
                 </p>
               </div>
             </div>
             <div class="Spoiler-hide">
-              <p th:each="offset : ${#strings.arraySplit(author.description.substring(500), '&#10')}" th:utext="${offset}">Биография
+              <p th:each="offset : ${#strings.arraySplit(author.description.substring(500), '&#10')}" th:text="${offset}">Биография
               </p>
             </div>
             <div class="Spoiler-footer" th:if="${author.description.length() gt 500}">

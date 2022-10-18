@@ -1,11 +1,14 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.Book;
+import com.example.MyBookShopApp.data.RecommendedBooksListDto;
 import com.example.MyBookShopApp.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -21,7 +24,7 @@ public class MainPageController {
 
     @ModelAttribute("recommendedBooks")
     public List<Book> recommendedBooks() {
-        return bookService.getBookData();
+        return bookService.getBookData(0, 6).getContent();
     }
 
     @ModelAttribute("recentBooks")

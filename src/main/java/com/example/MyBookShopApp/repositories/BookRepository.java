@@ -13,8 +13,8 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     Book findBySlug(String slug);
 
-    List<Book> findAllByPublicationDateAfterAndPublicationDateBeforeOrderByPublicationDateDesc(LocalDateTime after, LocalDateTime before);
+    List<Book> findAllByPublicationDateBetweenOrderByPublicationDateDesc(LocalDateTime after, LocalDateTime before);
 
-    @Query("SELECT b FROM Book b WHERE b.isBestseller = true ORDER BY b.publicationDate DESC")
+    @Query("FROM Book WHERE isBestseller = true ORDER BY publicationDate DESC")
     List<Book> findAllByBestsellerIsTrue();
 }

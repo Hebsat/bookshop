@@ -1,15 +1,14 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.Author;
+import com.example.MyBookShopApp.data.RecommendedBooksListDto;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.data.Book;
 import com.example.MyBookShopApp.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -70,5 +69,11 @@ public class BooksController {
         model.addAttribute("pageHeadDescription", "Книги автора " + author.getName() + ": " + Arrays.toString(author.getBookList().stream().map(Book::getTitle).toArray()));
         model.addAttribute("author", author);
         return "/books/author";
+    }
+
+    @GetMapping("/recommended")
+    @ResponseBody
+    public RecommendedBooksListDto recommendedBooks(@RequestParam int offset, @RequestParam int limit) {
+        return new RecommendedBooksListDto(bookService.getBookData(offset, limit).getContent());
     }
 }
