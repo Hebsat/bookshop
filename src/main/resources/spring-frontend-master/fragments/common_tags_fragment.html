@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div  th:fragment="tagFragment">
+    <h2 class="Middle-title" th:text="#{bookshop.names.book_tags}">Книги по тегам
+    </h2>
+    <div class="Tags" id="tags">
+        <div class="Tag Tag_xs" th:each="tag : ${tags}" th:class="${tag.volume}">
+            <a href="/tags/index.html" th:href="@{/books/tag/{tagSlug} (tagSlug=${tag.slug})}" th:text="${tag.name}">современная литература</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

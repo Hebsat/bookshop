@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.Author;
+import com.example.MyBookShopApp.data.SearchQueryDto;
 import com.example.MyBookShopApp.services.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,11 @@ public class AuthorsController {
         return "authors";
     }
 
+    @ModelAttribute("searchQueryDto")
+    public SearchQueryDto searchQueryDto() {
+        return new SearchQueryDto();
+    }
+
     @GetMapping
     public String authorsPage(Model model) {
         model.addAttribute("pageTitle", "authors");
@@ -41,9 +47,11 @@ public class AuthorsController {
         Logger.getLogger(AuthorsController.class.getName()).info("request author with slug: " + slug);
         Author author = authorService.getAuthorBySlug(slug);
         model.addAttribute("author", author);
+        model.addAttribute("books", authorService.getPageOfBooksByAuthor(author));
         model.addAttribute("pageTitle", "author");
         model.addAttribute("pageTitlePart", author.getName());
-        model.addAttribute("pageHeadDescription", author.getName() + ". Биография: " + author.getDescription().substring(0, 100) + "...");
+        model.addAttribute("pageHeadDescription",
+                author.getName() + ". Биография: " + author.getDescription().substring(0, 100) + "...");
         return "authors/slug";
     }
 }

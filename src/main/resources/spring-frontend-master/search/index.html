@@ -29,8 +29,10 @@
         </h1>
         <div class="Section">
           <div class="search">
-            <form class="form form_search" action="#" method="post" data-searchlimit="20">
-              <input class="search-input" id="querypage" name="querypage" type="text" placeholder="Search over 30 million book titles" value="Техника"/>
+            <form class="form form_search" action="#" method="post" data-searchlimit="5" th:object="${searchQueryDto}">
+              <input class="search-input" id="querypage" name="querypage" type="text" placeholder="Search over 30 million book titles" value="Техника"
+              th:field="*{searchQuery}"
+              th:placeholder="#{bookshop.names.placeholder}"/>
               <button class="search-button" type="submit" name="searchpage" id="searchpage" th:text="#{bookshop.names.search}">Поиск
               </button>
             </form>
@@ -38,15 +40,16 @@
         </div>
         <div class="Section Section_close">
           <header class="Section-header">
-            <h2 class="Section-title Middle-searchHeader" th:text="#{bookshop.names.search_result (${searchList.size()})}">Найдено 40 книг
+            <h2 class="Section-title Middle-searchHeader" th:text="#{bookshop.names.search_result (${searchResult.count})}">Найдено 40 книг
             </h2>
           </header>
           <div class="Cards Cards_search Cards_refresh">
-            <div class="Card" th:each="book : ${searchList}">
+            <div class="Card" th:each="book : ${searchResult.getBooks}">
               <div th:replace="~{fragments/common_book_fragment :: bookFragment}"></div>
             </div>
             <div class="Cards-footer Cards-footer_center">
-              <a class="btn btn_primary" href="#" data-refreshshow="search" data-refreshoffset="20" data-refreshlimit="20" data-refreshquery="Техника"
+              <a class="btn btn_primary" href="#" data-refreshshow="search" data-refreshoffset="0" data-refreshlimit="5" data-refreshquery="Техника"
+                 th:attr="data-refreshquery = ${searchQueryDto.searchQuery}"
                  th:text="#{bookshop.names.buttons.show_more}">Показать еще</a>
             </div>
           </div>

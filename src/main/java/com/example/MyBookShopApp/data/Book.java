@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -26,8 +27,8 @@ public class Book {
     private LocalDateTime publicationDate;
     @Column(name = "is_bestseller", columnDefinition = "SMALLINT", nullable = false)
     @Type(type = "org.hibernate.type.NumericBooleanType")
-    @ApiModelProperty(value = "if isBestseller = 1, the book is considered to be bestseller and if 0, then book is not a bestseller", position = 6)
-    private boolean isBestseller;
+    @ApiModelProperty(value = "if isBestseller = 1, the book is considered to be bestseller and if 0, then book is not a bestseller", name = "isBestseller", position = 6)
+    private boolean bestseller;
     @Column(nullable = false)
     @ApiModelProperty(value = "mnemonic identity sequence of characters", position = 8)
     private String slug;
@@ -50,12 +51,25 @@ public class Book {
     @JsonIgnore
     List<Author> authorList;
 
+    @ManyToMany(mappedBy = "bookList")
+    @JsonIgnore
+    List<Tag> tagList;
+
+    @OneToOne
+    @JoinColumn(name = "id", referencedColumnName = "book_id")
+    @JsonIgnore
+    private BookPopularity bookPopularity;
+
+    public double getPopularityValue() {
+        return bookPopularity.getCountPurchases() + bookPopularity.getCountInCart() * 0.7 + bookPopularity.getCountPostponed() * 0.4;
+    }
+
     @Override
     public String toString() {
         return "Book{" +
                 "id=" + id +
                 ", publicationDate=" + publicationDate +
-                ", isBestseller=" + isBestseller +
+                ", isBestseller=" + bestseller +
 //                ", slug='" + slug + '\'' +
                 ", title='" + title + '\'' +
 //                ", image='" + image + '\'' +
@@ -63,6 +77,7 @@ public class Book {
                 ", price='" + price + '\'' +
                 ", discount=" + discount +
                 ", authorList=" + Arrays.toString(authorList.stream().map(Author::getName).toArray()) +
+                ", tagList=" + Arrays.toString(tagList.stream().map(Tag::getName).toArray()) +
                 '}';
     }
 }

@@ -15,9 +15,9 @@
                     </div>
                     <div class="Header-search">
                         <div class="search">
-                            <form class="form form_search" action="#" method="post" data-searchlimit="20">
+                            <form class="form form_search" action="#" method="post" data-searchlimit="20" th:object="${searchQueryDto}">
                                 <input class="search-input" id="query" name="query" type="text" placeholder="Search over 30 million book titles"
-                                       th:placeholder="#{bookshop.names.placeholder}" value=""/>
+                                       th:placeholder="#{bookshop.names.placeholder}" value="" th:field="*{searchQuery}"/>
                                 <button class="search-button" type="submit" name="search" id="search" th:text="#{bookshop.names.search}">Поиск
                                 </button>
                             </form>

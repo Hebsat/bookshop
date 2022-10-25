@@ -54,7 +54,7 @@
             </h2>
           </div>
           <div class="Slider Slider_carousel">
-            <div class="Slider-box Cards" data-load="recent" data-loadoffset="8" data-loadlimit="20">
+            <div class="Slider-box Cards" data-load="recent" data-loadoffset="0" data-loadlimit="6">
               <div class="Slider-item" th:each="book : ${recentBooks}">
                 <div class="Slider-content">
                   <div class="Card">
@@ -77,7 +77,7 @@
             </h2>
           </div>
           <div class="Slider Slider_carousel">
-            <div class="Slider-box Cards" data-load="popular" data-loadoffset="8" data-loadlimit="20">
+            <div class="Slider-box Cards" data-load="popular" data-loadoffset="0" data-loadlimit="6">
               <div class="Slider-item" th:each="book : ${popularBooks}">
                 <div class="Slider-content">
                   <div class="Card">
@@ -96,108 +96,7 @@
             </div>
           </div>
         </div>
-        <h2 class="Middle-title" th:text="#{bookshop.names.book_tags}">Книги по тегам
-        </h2>
-        <div class="Tags" id="tags">
-          <div class="Tag Tag_xs"><a href="/tags/index.html">современная литература</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">классическая литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">зарубежная литература</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">фэнтези</a>
-          </div>
-          <div class="Tag Tag_lg"><a href="/tags/index.html">английская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">русская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">американская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">фантастика</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">детская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">детектив</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">любовь</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">мистика</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">юмор</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">приключения</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">сказка</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">французская литература</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">англия</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">художественная литература</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">психология</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">философия</a>
-          </div>
-          <div class="Tag Tag_lg"><a href="/tags/index.html">экранизировано</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">любимое</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">антиутопия</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">books you must read before you die</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">роман</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">франция</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">дайте две</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">young adult</a>
-          </div>
-          <div class="Tag Tag_lg"><a href="/tags/index.html">война</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">история</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">флэшмоб 2016</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">детство</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">жизнь</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">драма</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">россия</a>
-          </div>
-          <div class="Tag Tag_md"><a href="/tags/index.html">книжное путешествие</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">советская литература</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">триллер</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">америка</a>
-          </div>
-          <div class="Tag Tag_sm"><a href="/tags/index.html">немецкая литература</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">вампиры</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">школьная программа</a>
-          </div>
-          <div class="Tag Tag_xs"><a href="/tags/index.html">рассказы</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">магия</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">дети</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">русская классика</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">флэшмоб 2015</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">биография</a>
-          </div>
-          <div class="Tag"><a href="/tags/index.html">english</a>
-          </div>
-        </div>
+        <div th:replace="~{fragments/common_tags_fragment :: tagFragment}"></div>
       </main>
     </div>
   </div>

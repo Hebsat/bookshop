@@ -37,11 +37,13 @@
         </h1>
         <div class="Section">
           <div class="Cards Cards_refresh">
-            <div class="Card" th:each="book : ${author.bookList}">
+            <div class="Card" th:each="book : ${books}">
               <div th:replace="~{fragments/common_book_fragment :: bookFragment}"></div>
             </div>
             <div class="Cards-footer Cards-footer_center">
-              <a class="btn btn_primary" href="#" data-refreshshow="author" data-refreshoffset="20" data-refreshlimit="20" data-refreshid="10">Показать еще</a>
+              <a class="btn btn_primary" href="#" data-refreshshow="author" data-refreshoffset="0" data-refreshlimit="10" data-refreshid="10"
+                 th:attr="data-refreshid=${author.slug} + '/page'"
+                 th:text="#{bookshop.names.buttons.show_more}">Показать еще</a>
             </div>
           </div>
         </div>

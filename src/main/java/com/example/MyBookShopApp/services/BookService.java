@@ -1,25 +1,26 @@
 package com.example.MyBookShopApp.services;
 
 import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.repositories.AuthorRepository;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 @Service
 public class BookService {
+
+     @Value("${bookshop.default.offset}")
+     private int defaultOffset;
+     @Value("${bookshop.default.limit}")
+     private int defaultLimit;
 
      private final BookRepository bookRepository;
 
@@ -28,37 +29,73 @@ public class BookService {
           this.bookRepository = bookRepository;
      }
 
-     public Page<Book> getBookData(int offset, int limit) {
-          Logger.getLogger(BookService.class.getName()).info("getBookData started");
+     public Page<Book> getPageOfRecommendedBooks(int offset, int limit) {
+          Logger.getLogger(BookService.class.getName()).info("getPageOfRecommendedBooks started with offset " + offset + " and limit " + limit);
           Pageable nextPage = PageRequest.of(offset, limit, Sort.by(
                   Sort.Direction.DESC, "discount")
                   .and(Sort.by(Sort.Direction.ASC, "title")));
           return bookRepository.findAll(nextPage);
      }
 
+     public Page<Book> getPageOfRecommendedBooks() {
+          return getPageOfRecommendedBooks(defaultOffset, defaultLimit);
+     }
+
+     private Page<Book> getPageOfRecentBooks(LocalDateTime from, int offset, int limit, LocalDateTime to) {
+          Logger.getLogger(BookService.class.getName()).info(
+                  "getPageOfRecentBooks started from " + from + " to " + to + " with offset " + offset + " and limit " + limit);
+          Pageable nextPage = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, "publicationDate"));
+          return bookRepository.findAllByPublicationDateBetweenOrderByPublicationDateDesc(from, to, nextPage);
+     }
+
+     public Page<Book> getPageOfRecentBooks(String from, int offset, int limit, String to) {
+          return getPageOfRecentBooks(DateTimeFormatter.fromDateTime(from), offset, limit, DateTimeFormatter.toDateTime(to));
+     }
+
+     public Page<Book> getPageOfRecentBooks(int offset, int limit, String to) {
+          return getPageOfRecentBooks(LocalDateTime.now().minus(1,ChronoUnit.CENTURIES), offset, limit, DateTimeFormatter.toDateTime(to));
+     }
+
+     public Page<Book> getPageOfRecentBooks(String from, int offset, int limit) {
+          return getPageOfRecentBooks(DateTimeFormatter.fromDateTime(from), offset, limit, LocalDateTime.now());
+     }
+
+     public Page<Book> getPageOfRecentBooks(int offset, int limit) {
+          return getPageOfRecentBooks(LocalDateTime.now().minus(1,ChronoUnit.CENTURIES), offset, limit, LocalDateTime.now());
+     }
+
+     public Page<Book> getPageOfRecentBooks() {
+          return getPageOfRecentBooks(defaultOffset, defaultLimit);
+     }
+
+     public Page<Book> getPageOfPopularBooks(int offset, int limit) {
+          Logger.getLogger(BookService.class.getName()).info("getPageOfPopularBooks started with offset " + offset + " and limit " + limit);
+          Pageable nextPage = PageRequest.of(offset, limit);
+          return bookRepository.findAllByPopularityValue(nextPage);
+     }
+
+     public Page<Book> getPageOfPopularBooks() {
+          return getPageOfPopularBooks(defaultOffset, defaultLimit);
+     }
+
+
      public Book getBookBySlug(String slug) {
           Logger.getLogger(BookService.class.getName()).info("getBookBySlug with slug: " + slug);
           return bookRepository.findBySlug(slug);
      }
 
-     public Book getBook(int id) {
+     public Book getBookById(int id) {
           Logger.getLogger(BookService.class.getName()).info("getBookById with id: " + id);
           return bookRepository.findById(id).get();
      }
 
-     public List<Book> getRecentBooks() {
-          Logger.getLogger(BookService.class.getName()).info("getRecentBooks started");
-          List<Book> bookList = bookRepository
-                  .findAllByPublicationDateBetweenOrderByPublicationDateDesc(
-                  LocalDateTime.of(2022,10,1,0,0,0,0).minus(7, ChronoUnit.DAYS),
-                  LocalDateTime.of(2022,10,1,0,0,0,0)
-          );
-          return bookList.subList(0, Math.min(bookList.size(), 20));
+     public Page<Book> getPageOfSearchResultBooks(String query, int offset, int limit) {
+          Logger.getLogger(BookService.class.getName()).info("find <<" + query + ">> with offset " + offset + " and limit " + limit);
+          Pageable nextPage = PageRequest.of(offset, limit);
+          return bookRepository.findBooksByTitleContaining(query, nextPage);
      }
 
-     public List<Book> getPopularBooks() {
-          Logger.getLogger(BookService.class.getName()).info("getPopularBooks started");
-          List<Book> bookList = bookRepository.findAllByBestsellerIsTrue();
-          return bookList.subList(0, 20);
+     public int getCountOfSearchResult(String query) {
+          return bookRepository.countByTitleContaining(query);
      }
 }
