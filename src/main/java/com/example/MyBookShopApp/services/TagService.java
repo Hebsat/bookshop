@@ -13,14 +13,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class TagService {
 
-    @Value("${bookshop.default.offset}")
-    private int defaultOffset;
-    @Value("${bookshop.default.limit}")
-    private int defaultLimit;
+    @Value("${bookshop.default.page}")
+    private int defaultPage;
+    @Value("${bookshop.default.size}")
+    private int defaultSize;
     private static final String[] TAG_CLASSES = {"Tag Tag_xs", "Tag Tag_sm", "Tag", "Tag Tag_md", "Tag Tag_lg"};
 
     private final TagRepository tagRepository;
@@ -33,21 +34,26 @@ public class TagService {
     }
 
     public List<Tag> getTags() {
+        Logger.getLogger(TagService.class.getName()).info("getTags");
         return setTagVolumes(tagRepository.findAll());
     }
 
-    public Tag getTagBySlug(String tagSlug) {
-        return tagRepository.findTagBySlug(tagSlug);
+    public Tag getTagBySlug(String slug) {
+        Logger.getLogger(TagService.class.getName()).info("getTagBySlug " + slug);
+        return tagRepository.findTagBySlug(slug);
     }
 
     public Page<Book> getPageOfBooksByTag(String slug, int page, int size) {
+        Logger.getLogger(TagService.class.getName()).info(
+                "getPageOfBooksByTag " + slug + " with page " + page + " and size " + size);
         Pageable nextPage = PageRequest.of(page, size);
         Tag tag = tagRepository.findTagBySlug(slug);
         return bookRepository.findBooksByTagListContains(tag, nextPage);
     }
 
     public Page<Book> getPageOfBooksByTag(String slug) {
-        return getPageOfBooksByTag(slug, defaultOffset, defaultLimit);
+        Logger.getLogger(TagService.class.getName()).info("getPageOfBooksByTag " + slug);
+        return getPageOfBooksByTag(slug, defaultPage, defaultSize);
     }
 
     private List<Tag> setTagVolumes(List<Tag> tagList) {

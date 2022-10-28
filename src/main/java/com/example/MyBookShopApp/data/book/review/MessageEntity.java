@@ -15,6 +15,7 @@ public class MessageEntity {
     private int id;
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime time;
+    @Column(name = "user_id")
     private int userId;
     private String email;
     private String name;

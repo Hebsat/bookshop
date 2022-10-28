@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:class="'Tags' + ${genre.getEmbeddedEmbedded() ? ' Tags_embed' : ''}"
+     th:fragment="genresFragment">
+  <div class="Tags-title">
+    <div class="Tag" th:fragment="genreFragment">
+      <a href="/genres/slug.html" th:href="@{/genres/{slug} (slug=${genre.slug})}">
+        <span class="undefined-amount" th:text="${genre.name}">Genre</span>
+        <span class="undefined-amount" th:text="'(' + ${genre.bookListIncludedBooksOfEmbeddedGenres.size()} +')'">(15)</span>
+      </a>
+    </div>
+  </div>
+  <div th:each="genre : ${genre.embeddedGenreList}" th:remove="tag">
+    <div th:replace="~{:: (${#lists.isEmpty(genre.embeddedGenreList)} ? genreFragment : genresFragment)}"></div>
+  </div>
+</div>
+</body>
+</html>

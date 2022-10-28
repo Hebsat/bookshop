@@ -1,10 +1,10 @@
 package com.example.MyBookShopApp.data;
 
+import com.example.MyBookShopApp.data.genre.Genre;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -54,15 +54,15 @@ public class Book {
     @ManyToMany(mappedBy = "bookList")
     @JsonIgnore
     List<Tag> tagList;
+    @ManyToOne
+    @JoinTable(name = "book2genre", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    @JsonIgnore
+    private Genre genre;
 
     @OneToOne
     @JoinColumn(name = "id", referencedColumnName = "book_id")
     @JsonIgnore
     private BookPopularity bookPopularity;
-
-    public double getPopularityValue() {
-        return bookPopularity.getCountPurchases() + bookPopularity.getCountInCart() * 0.7 + bookPopularity.getCountPostponed() * 0.4;
-    }
 
     @Override
     public String toString() {

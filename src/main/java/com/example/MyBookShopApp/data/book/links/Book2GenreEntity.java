@@ -12,8 +12,8 @@ public class Book2GenreEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(nullable = false)
+    @Column(name = "book_id",nullable = false)
     private int bookId;
-    @Column(nullable = false)
+    @Column(name = "genre_id",nullable = false)
     private int genreId;
 }

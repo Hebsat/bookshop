@@ -34,8 +34,8 @@ public class ApiBooksController {
     @GetMapping("/recommended")
     @ApiOperation(value = "${bookshop.value.recommended}", notes = "${bookshop.notes.recommended}")
     public ResponseEntity<BooksListDto> getRecommendedBooks(
-            @ApiParam("${bookshop.param.offset}") @RequestParam(defaultValue = "${bookshop.default.offset}", required = false) int offset,
-            @ApiParam("${bookshop.param.limit}")  @RequestParam(defaultValue = "${bookshop.default.limit}", required = false) int limit) {
+            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("${bookshop.param.size}")  @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) {
         return ResponseEntity.status(HttpStatus.OK).body(new BooksListDto(bookService.getPageOfRecommendedBooks(offset, limit).getContent()));
     }
 
@@ -44,8 +44,8 @@ public class ApiBooksController {
     public ResponseEntity<BooksListDto> getRecentBooks(
             @ApiParam(value = "${bookshop.param.from}", example = "25-11-2020")  @RequestParam(name = "from", required = false) String from,
             @ApiParam(value = "${bookshop.param.to}", example = "25-11-2020")    @RequestParam(name = "to", required = false) String to,
-            @ApiParam("${bookshop.param.offset}") @RequestParam(defaultValue = "${bookshop.default.offset}", required = false) int offset,
-            @ApiParam("${bookshop.param.limit}")  @RequestParam(defaultValue = "${bookshop.default.limit}", required = false) int limit) {
+            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("${bookshop.param.size}")  @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) {
         if (from != null && to != null) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new BooksListDto(bookService.getPageOfRecentBooks(from, offset, limit, to).getContent()));
@@ -64,8 +64,8 @@ public class ApiBooksController {
     @GetMapping("/popular")
     @ApiOperation(value = "${bookshop.value.popular}", notes = "${bookshop.notes.popular}")
     public ResponseEntity<BooksListDto> getPopularBooks(
-            @ApiParam("${bookshop.param.offset}") @RequestParam(defaultValue = "${bookshop.default.offset}", required = false) int offset,
-            @ApiParam("${bookshop.param.limit}")  @RequestParam(defaultValue = "${bookshop.default.limit}", required = false) int limit) {
+            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("${bookshop.param.size}")  @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) {
         return ResponseEntity.status(HttpStatus.OK).body(new BooksListDto(bookService.getPageOfPopularBooks(offset, limit).getContent()));
     }
 
@@ -73,8 +73,8 @@ public class ApiBooksController {
     @ApiOperation(value = "${bookshop.value.genres}", notes = "${bookshop.notes.genres}")
     public ResponseEntity<BooksListDto> getBooksByGenre(
             @ApiParam(value = "${bookshop.param.id}", example = "1") @PathVariable int id,
-            @ApiParam("${bookshop.param.offset}") @RequestParam(defaultValue = "${bookshop.default.offset}", required = false) int offset,
-            @ApiParam("${bookshop.param.limit}")  @RequestParam(defaultValue = "${bookshop.default.limit}", required = false) int limit) {
+            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("${bookshop.param.size}")  @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) {
         return ResponseEntity.status(HttpStatus.OK).body(new BooksListDto(bookService.getPageOfPopularBooks(offset, limit).getContent()));
     }
 
@@ -82,8 +82,8 @@ public class ApiBooksController {
     @ApiOperation(value = "${bookshop.value.authors}", notes = "${bookshop.notes.authors}")
     public ResponseEntity<BooksListDto> getBooksByAuthor(
             @ApiParam(value = "${bookshop.param.id}", example = "1") @PathVariable int id,
-            @ApiParam("${bookshop.param.offset}") @RequestParam(defaultValue = "${bookshop.default.offset}", required = false) int offset,
-            @ApiParam("${bookshop.param.limit}")  @RequestParam(defaultValue = "${bookshop.default.limit}", required = false) int limit) {
+            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("${bookshop.param.size}")  @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) {
         return ResponseEntity.status(HttpStatus.OK).body(new BooksListDto(authorService.getAuthorById(id).getBookList()));
     }
 
@@ -91,8 +91,8 @@ public class ApiBooksController {
     @ApiOperation(value = "${bookshop.value.tags}", notes = "${bookshop.notes.tags}")
     public ResponseEntity<BooksListDto> getBooksByTag(
             @ApiParam(value = "${bookshop.param.id}", example = "1") @PathVariable int id,
-            @ApiParam("${bookshop.param.offset}") @RequestParam(defaultValue = "${bookshop.default.offset}", required = false) int offset,
-            @ApiParam("${bookshop.param.limit}")  @RequestParam(defaultValue = "${bookshop.default.limit}", required = false) int limit) {
+            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("${bookshop.param.size}")  @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) {
         return ResponseEntity.status(HttpStatus.OK).body(new BooksListDto(bookService.getPageOfPopularBooks(offset, limit).getContent()));
     }
 }

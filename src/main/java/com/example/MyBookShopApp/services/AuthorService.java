@@ -19,10 +19,10 @@ import java.util.stream.Collectors;
 @Service
 public class AuthorService {
 
-    @Value("${bookshop.default.offset}")
-    private int defaultOffset;
-    @Value("${bookshop.default.limit}")
-    private int defaultLimit;
+    @Value("${bookshop.default.page}")
+    private int defaultPage;
+    @Value("${bookshop.default.size}")
+    private int defaultSize;
 
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
@@ -34,17 +34,21 @@ public class AuthorService {
     }
 
     public Map<String, List<Author>> getAuthorData() {
+        Logger.getLogger(AuthorService.class.getName()).info(
+                "getAuthorData");
         List<Author> authors = authorRepository.findAll();
         return authors.stream().collect(Collectors.groupingBy(a -> a.getName().substring(0, 1)));
     }
 
     public Page<Book> getPageOfBooksByAuthor(Author author, int page, int size) {
+        Logger.getLogger(AuthorService.class.getName()).info(
+                "getPageOfBooksByAuthor: " + author.getName() + " with page " + page + " and size " + size);
         Pageable nextPage = PageRequest.of(page, size);
         return bookRepository.findBooksByAuthorListContains(author, nextPage);
     }
 
     public Page<Book> getPageOfBooksByAuthor(Author author) {
-        return getPageOfBooksByAuthor(author, defaultOffset, defaultLimit);
+        return getPageOfBooksByAuthor(author, defaultPage, defaultSize);
     }
 
     public Page<Book> getPageOfBooksByAuthor(String slug, int page, int size) {
@@ -52,7 +56,6 @@ public class AuthorService {
     }
 
     public Author getAuthorBySlug(String slug) {
-        Logger.getLogger(AuthorService.class.getName()).info("getAuthorBySlug with slug: " + slug);
         return authorRepository.findAuthorBySlug(slug);
     }
 

@@ -13,13 +13,13 @@ public class BalanceTransactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "user_id")
     private int userId;
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime time;
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private int value;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "book_id")
     private int bookId;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;

@@ -3,6 +3,7 @@ package com.example.MyBookShopApp.controllers;
 import com.example.MyBookShopApp.data.BooksListDto;
 import com.example.MyBookShopApp.data.SearchQueryDto;
 import com.example.MyBookShopApp.services.BookService;
+import com.example.MyBookShopApp.services.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +15,11 @@ import java.util.logging.Logger;
 @Controller
 public class SearchController {
 
-    private final BookService bookService;
+    private final SearchService searchService;
 
     @Autowired
-    public SearchController(BookService bookService) {
-        this.bookService = bookService;
+    public SearchController(SearchService searchService) {
+        this.searchService = searchService;
     }
 
     @ModelAttribute("pageTitle")
@@ -36,18 +37,17 @@ public class SearchController {
         return new SearchQueryDto();
     }
 
-    @GetMapping({"/search/", "/search/{query}"})
+    @GetMapping({"/search", "/search/{query}"})
     public String searchPage(@RequestParam(required = false, defaultValue = "${bookshop.default.offset}") int offset,
                              @RequestParam(required = false, defaultValue = "${bookshop.default.limit}") int limit,
                              @PathVariable(value = "query", required = false) SearchQueryDto searchQueryDto, Model model) {
         if (searchQueryDto == null) {
             model.addAttribute("searchResult", new BooksListDto(new ArrayList<>()));
         } else {
-            Logger.getLogger(SearchController.class.getName()).info("query = " + searchQueryDto.toString() + " with offset " + offset + " and limit " + limit);
             model.addAttribute("searchQueryDto", searchQueryDto);
             model.addAttribute("searchResult", new BooksListDto(
-                    bookService.getCountOfSearchResult(searchQueryDto.getSearchQuery()),
-                    bookService.getPageOfSearchResultBooks(searchQueryDto.getSearchQuery(), offset, limit).getContent()));
+                    searchService.getCountOfSearchResult(searchQueryDto.getSearchQuery()),
+                    searchService.getPageOfSearchResultBooks(searchQueryDto.getSearchQuery(), offset, limit).getContent()));
         }
         return "search/index";
     }
@@ -58,6 +58,6 @@ public class SearchController {
                                         @RequestParam(required = false, defaultValue = "10") int limit,
                                         @PathVariable(value = "query", required = false) SearchQueryDto searchQueryDto) {
         Logger.getLogger(SearchController.class.getName()).info("REST query = " + searchQueryDto.getSearchQuery() + " with offset " + offset + " and limit " + limit);
-        return new BooksListDto(bookService.getPageOfSearchResultBooks(searchQueryDto.getSearchQuery(), offset, limit).getContent());
+        return new BooksListDto(searchService.getPageOfSearchResultBooks(searchQueryDto.getSearchQuery(), offset, limit).getContent());
     }
 }

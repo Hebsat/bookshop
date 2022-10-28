@@ -15,10 +15,10 @@ public class Book2UserEntity {
     private int id;
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime time;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "type_id")
     private int typeId;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "book_id")
     private int bookId;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "user_id")
     private int userId;
 }

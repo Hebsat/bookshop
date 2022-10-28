@@ -13,9 +13,9 @@ public class BookReviewEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "book_id")
     private int bookId;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "user_id")
     private int userId;
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime time;
