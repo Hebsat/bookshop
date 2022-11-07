@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.services;
 
-import com.example.MyBookShopApp.data.Book;
+import com.example.MyBookShopApp.data.main.Book;
+import com.example.MyBookShopApp.errors.WrongEntityException;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 @Service
@@ -27,6 +30,10 @@ public class BookService {
      @Autowired
      public BookService(BookRepository bookRepository) {
           this.bookRepository = bookRepository;
+     }
+
+     public Book saveBook(Book book) {
+          return bookRepository.save(book);
      }
 
      public Page<Book> getPageOfRecommendedBooks(int page, int size) {
@@ -79,13 +86,13 @@ public class BookService {
      }
 
 
-     public Book getBookBySlug(String slug) {
+     public Book getBookBySlug(String slug) throws WrongEntityException {
           Logger.getLogger(BookService.class.getName()).info("getBookBySlug with slug: " + slug);
-          return bookRepository.findBySlug(slug);
+          return bookRepository.findBySlug(slug).orElseThrow(() -> new WrongEntityException("Книги с идентификатором " + slug + " не существует"));
      }
 
-     public Book getBookById(int id) {
-          Logger.getLogger(BookService.class.getName()).info("getBookById with id: " + id);
-          return bookRepository.findById(id).get();
+     public List<Book> getBooksBySlugList(Collection<String> slugs) {
+          Logger.getLogger(BookService.class.getName()).info("getBooksBySlugList with slugs: " + slugs);
+          return bookRepository.findBooksBySlugIn(slugs);
      }
 }

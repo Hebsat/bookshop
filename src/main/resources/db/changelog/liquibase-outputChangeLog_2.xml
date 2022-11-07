@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="2.1" author="admin">
+        <addForeignKeyConstraint constraintName="fk_book2book_file"
+                                 baseTableName="book_files"
+                                 baseColumnNames="book_id"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="CASCADE"
+                                 onUpdate="NO ACTION"
+                                 referencedColumnNames="id"
+                                 referencedTableName="books"/>
+    </changeSet>
+
+    <changeSet id="2.2" author="admin">
+        <addForeignKeyConstraint constraintName="fk_type2book_file"
+                                 baseTableName="book_files"
+                                 baseColumnNames="type_id"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 onDelete="CASCADE"
+                                 onUpdate="NO ACTION"
+                                 referencedColumnNames="id"
+                                 referencedTableName="book_file_types"/>
+    </changeSet>
+
+    <changeSet id="2.3" author="admin">
+        <addUniqueConstraint columnNames="hash" constraintName="book_files_hash" tableName="book_files"/>
+    </changeSet>
+
+</databaseChangeLog>

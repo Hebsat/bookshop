@@ -51,11 +51,11 @@
             </form>
           </div>
           <div class="Cards Cards_refresh">
-            <div class="Card" th:each="book : ${recentBooks}">
+            <div class="Card" th:each="book : ${recentBooks}" th:remove="tag">
               <div th:replace="~{fragments/common_book_fragment :: bookFragment}"></div>
             </div>
           </div>
-          <div class="Cards-footer Cards-footer_center">
+          <div class="Cards-footer Cards-footer_center" th:if="not ${lastPage}">
             <a class="btn btn_primary" href="#" data-refreshshow="recent" data-refreshoffset="0" data-refreshlimit="10"
                th:text="#{bookshop.names.buttons.show_more}">Показать еще</a>
           </div>

@@ -1,19 +1,30 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.data.Author;
-import com.example.MyBookShopApp.data.Book;
 import com.example.MyBookShopApp.data.BooksListDto;
 import com.example.MyBookShopApp.data.SearchQueryDto;
+import com.example.MyBookShopApp.data.main.Author;
+import com.example.MyBookShopApp.data.main.Book;
+import com.example.MyBookShopApp.data.main.BookFile;
+import com.example.MyBookShopApp.errors.WrongEntityException;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
+import com.example.MyBookShopApp.services.CookieService;
+import com.example.MyBookShopApp.services.ResourceStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/books")
@@ -21,11 +32,15 @@ public class BooksController {
 
     private final BookService bookService;
     private final AuthorService authorService;
+    private final ResourceStorageService resourceStorageService;
+    private final CookieService cookieService;
 
     @Autowired
-    public BooksController(BookService bookService, AuthorService authorService) {
+    public BooksController(BookService bookService, AuthorService authorService, ResourceStorageService resourceStorage, CookieService cookieService) {
         this.bookService = bookService;
         this.authorService = authorService;
+        this.resourceStorageService = resourceStorage;
+        this.cookieService = cookieService;
     }
 
     @ModelAttribute("searchQueryDto")
@@ -33,20 +48,33 @@ public class BooksController {
         return new SearchQueryDto();
     }
 
+    @ModelAttribute("booksInCart")
+    public int booksInCart(@CookieValue(name = "cartContents", required = false) String contents) {
+        return cookieService.getCountOfBooksInCookie(contents);
+    }
+
+    @ModelAttribute("booksInPostponed")
+    public int booksInPostponed(@CookieValue(name = "postponedContents", required = false) String contents) {
+        return cookieService.getCountOfBooksInCookie(contents);
+    }
+
     @GetMapping("/recent")
     public String recentBooksPage(
             @RequestParam(required = false) String from,
             @RequestParam(required = false) String to,
-            @RequestParam(required = false) Integer offset,
-            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false, defaultValue = "${bookshop.default.page}") int offset,
+            @RequestParam(required = false, defaultValue = "${bookshop.default.size}") int limit,
             Model model) {
-        List<Book> bookList;
+        Page<Book> bookPage;
         if (from != null && to != null) {
-            bookList = bookService.getPageOfRecentBooks(from, offset, limit, to).getContent();
+            bookPage = bookService.getPageOfRecentBooks(from, offset, limit, to);
         } else {
-            bookList = bookService.getPageOfRecentBooks().getContent();
+            bookPage = bookService.getPageOfRecentBooks(offset, limit);
         }
-        model.addAttribute("recentBooks", bookList);
+        if (bookPage.getTotalPages() == 1) {
+            model.addAttribute("lastPage", true);
+        }
+        model.addAttribute("recentBooks", bookPage.getContent());
         model.addAttribute("topBarIdentifier", "recent");
         model.addAttribute("pageTitle", "recent");
         model.addAttribute("pageHeadDescription", "It's over 9000 книг...");
@@ -64,28 +92,30 @@ public class BooksController {
     }
 
     @GetMapping("/{slug}")
-    public String getBook(@PathVariable String slug, Model model) {
-        Logger.getLogger(BooksController.class.getName()).info("request book with slug: " + slug);
+    public String getBook(@PathVariable String slug, Model model) throws WrongEntityException {
         Book book = bookService.getBookBySlug(slug);
-        Logger.getLogger(BooksController.class.getName()).info(book.toString());
         model.addAttribute("topBarIdentifier", "genres");
         model.addAttribute("pageTitle", "book");
         model.addAttribute("pageTitlePart", book.getTitle());
         model.addAttribute("pageHeadDescription", book.getTitle() + " Описание: " + book.getDescription().substring(0, 100) + "...");
-        model.addAttribute("book", bookService.getBookBySlug(slug));
+        model.addAttribute("book", book);
         return "/books/slug";
     }
 
     @GetMapping("/author/{slug}")
-    public String getAuthorBooks(@PathVariable String slug, Model model) {
+    public String getAuthorBooks(@PathVariable String slug, Model model) throws WrongEntityException {
         Author author = authorService.getAuthorBySlug(slug);
+        Page<Book> bookPage = authorService.getPageOfBooksByAuthor(author);
+        if (bookPage.getTotalPages() == 1) {
+            model.addAttribute("lastPage", true);
+        }
         model.addAttribute("topBarIdentifier", "genres");
         model.addAttribute("pageTitle", "books");
         model.addAttribute("pageTitlePart", author.getName());
         model.addAttribute("pageHeadDescription",
                 "Книги автора " + author.getName() + ": " + Arrays.toString(author.getBookList().stream().map(Book::getTitle).toArray()));
         model.addAttribute("author", author);
-        model.addAttribute("books", authorService.getPageOfBooksByAuthor(author));
+        model.addAttribute("books", bookPage.getContent());
         return "/books/author";
     }
 
@@ -104,6 +134,7 @@ public class BooksController {
             @RequestParam(required = false) String to,
             @RequestParam int offset,
             @RequestParam int limit) {
+        System.out.println(from + " " + to);
         if (from != null && to != null) {
             return new BooksListDto(bookService.getPageOfRecentBooks(from, offset, limit, to).getContent());
         } else {
@@ -124,7 +155,30 @@ public class BooksController {
     public BooksListDto getAuthorBooksPage(
             @PathVariable String slug,
             @RequestParam int offset,
-            @RequestParam int limit) {
-        return new BooksListDto(authorService.getPageOfBooksByAuthor(slug, offset, limit).getContent());
+            @RequestParam int limit) throws WrongEntityException {
+        Author author = authorService.getAuthorBySlug(slug);
+        return new BooksListDto(authorService.getPageOfBooksByAuthor(author, offset, limit).getContent());
+    }
+
+    @PostMapping("/{slug}/img/save")
+    public String saveNewBookImage(@PathVariable String slug, @RequestParam MultipartFile file) {
+        resourceStorageService.saveNewBookCoverImage(file, slug);
+        return "redirect:/books/" + slug;
+    }
+
+    @GetMapping("/download/{hash}")
+    public ResponseEntity<ByteArrayResource> getBookFile(@PathVariable String hash) {
+        BookFile bookFile = resourceStorageService.getBookFileByHash(hash);
+        Path path = resourceStorageService.getBookFilePath(bookFile);
+        MediaType mediaType = resourceStorageService.getBookFileMime(bookFile);
+        byte[] data = resourceStorageService.getBookFileByteArray(bookFile);
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + path.getFileName().toString())
+                .contentType(mediaType)
+//                .contentLength(data.length)
+//                .header(HttpHeaders.DATE, LocalDateTime.now().format(DateTimeFormatter
+//                        .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
+//                        .withZone(ZoneId.of("Europe/Moscow"))))
+                .body(new ByteArrayResource(data));
     }
 }

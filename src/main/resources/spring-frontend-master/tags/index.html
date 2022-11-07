@@ -42,10 +42,10 @@
             </div>
           </div>
           <div class="Cards Cards_refresh">
-            <div class="Card" th:each="book : ${books}">
+            <div class="Card" th:each="book : ${books}" th:remove="tag">
               <div th:replace="~{fragments/common_book_fragment :: bookFragment}"></div>
             </div>
-            <div class="Cards-footer Cards-footer_center">
+            <div class="Cards-footer Cards-footer_center" th:if="not ${lastPage}">
               <a class="btn btn_primary" href="#" data-refreshshow="tag" data-refreshoffset="0" data-refreshlimit="10" data-refreshid="10"
                  th:attr="data-refreshid=${tag.slug} + '/page'" th:text="#{bookshop.names.buttons.show_more}">Показать еще</a>
             </div>

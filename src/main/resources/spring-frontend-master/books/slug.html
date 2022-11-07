@@ -36,8 +36,13 @@
         <div class="Product">
           <div class="ProductCard">
             <div class="ProductCard-look">
-              <div class="ProductCard-photo"><img src="/assets/img/content/main/card.jpg" th:src="${book.image}" alt="card.jpg"/>
-              </div>
+              <form id="imgForm" method="POST" enctype="multipart/form-data" action="#"
+                    th:action="@{/books/{slug}/img/save (slug=${book.slug})}">
+                <div class="ProductCard-photo" id="uploadButton">
+                  <img src="/assets/img/content/main/card.jpg" th:src="${book.image}" alt="card.jpg"/>
+                </div>
+                <input type="file" name="file" id="dialog" style="display: none" accept="image/*">
+              </form>
             </div>
             <div class="ProductCard-desc">
               <div class="ProductCard-header">
@@ -322,7 +327,7 @@
                 </div>
                 <div class="ProductCard-tags">
                   <span class="ProductCard-titleProp" th:text="#{bookshop.names.book_page.tags}">Тэги:</span>
-                  <a href="/tags/"
+                  <a style="padding: 3px" href="/tags/"
                      th:each="tag, state : ${book.tagList}"
                      th:href="@{/books/tag/{slug} (slug = ${tag.slug})}"
                      th:text="${tag.name} + (${state.last} ? '' : ', ')">tagName</a>
@@ -352,13 +357,15 @@
                 <!--+div.-cartElement.-cartElement_amount-->
                 <!--    +Amount._product-->
                 <div class="ProductCard-cartElement">
-                  <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="Отложена">
+                  <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" data-bookid="[1111]"
+                          th:attr="data-bookid='postponed/add/' + ${book.slug}" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="Отложена">
                     <span class="btn-icon"><img src="/assets/img/icons/heart.svg" alt="heart.svg"/></span>
-                    <span class="btn-content"th:text="#{bookshop.names.book_page.postpone}">Отложить</span>
+                    <span class="btn-content" th:text="#{bookshop.names.book_page.postpone}">Отложить</span>
                   </button>
                 </div>
                 <div class="ProductCard-cartElement">
-                  <button class="btn btn_primary btn_outline" data-sendstatus="CART" data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="В корзине">
+                  <button class="btn btn_primary btn_outline" data-sendstatus="CART" data-bookid="[1111]"
+                          th:attr="data-bookid='cart/add/' + ${book.slug}" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="В корзине">
                     <span class="btn-icon"><img src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/></span>
                     <span class="btn-content" th:text="#{bookshop.names.book_page.buy}">Купить</span>
                   </button>
@@ -378,6 +385,18 @@
                   </button>
                 </div>
               </div>
+
+              <div id="myPopup">
+                <p>Ссылки для скачивания</p>
+                <div id="myPopup_string" th:each="bookFile : ${book.bookFileList}">
+                  <a href="#" th:href="@{/books/download/{hash} (hash=${bookFile.hash})}"
+                     th:text="${bookFile.bookFileType.getExtensionStringByType()} + ' (' + ${bookFile.hash} + ')'
+                     + ' - ' + ${bookFile.bookFileType.description}"></a>
+                </div>
+                <span id="myPopup_close" class="close">❌</span>
+              </div>
+              <div id="myOverlay"></div>
+
               <!--+div.-cart-->
               <!--    //+div.-cartElement.-cartElement_amount-->
               <!--    //    +Amount._product-->
@@ -533,5 +552,7 @@
   </div>
   <footer th:replace="~{fragments/common_footer_fragment :: footerFragment}"></footer>
   <script src="/assets/plg/jQuery/jquery-3.5.1.min.js"></script>
+  <script src="/assets/js/UploadNewBookImageScript.js"></script>
+  <script src="/assets/js/DownloadBookWindowScript.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </body></html>

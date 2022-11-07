@@ -1,7 +1,9 @@
 package com.example.MyBookShopApp.services;
 
-import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.genre.Genre;
+import com.example.MyBookShopApp.data.main.Book;
+import com.example.MyBookShopApp.data.main.Genre;
+import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
+import com.example.MyBookShopApp.errors.WrongEntityException;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import com.example.MyBookShopApp.repositories.GenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +33,15 @@ public class GenreService {
         this.bookRepository = bookRepository;
     }
 
-    public Genre getGenreBySlug(String slug) {
+    public Genre getGenreById(int id) throws BookshopWrongParameterException {
+        return genreRepository.findById(id)
+                .orElseThrow(() -> new BookshopWrongParameterException("Genre with the specified id " + id + " does not exist"));
+    }
+
+    public Genre getGenreBySlug(String slug) throws WrongEntityException {
         Logger.getLogger(GenreService.class.getName()).info("getGenreBySlug " + slug);
-        return genreRepository.findGenreBySlug(slug);
+        return genreRepository.findGenreBySlug(slug)
+                .orElseThrow(() -> new WrongEntityException("Жанра с идентификатором " + slug + " не существует"));
     }
 
     public List<Genre> getGenres() {
@@ -50,17 +58,12 @@ public class GenreService {
         return bookRepository.findBooksByGenre(genre, nextPage);
     }
 
-    public Page<Book> getPageOfBooksByGenre(Genre genre) {
-        return getPageOfBooksByGenre(genre, defaultPage, defaultSize);
-    }
-
     public Page<Book> getPageOfBooksByGenreIncludedEmbeddedGenres(Genre genre, int page, int size) {
         Logger.getLogger(GenreService.class.getName()).info(
                 "getPageOfBooksByGenreIncludedEmbeddedGenres " + genre + " with page " + page + " and size " + size);
         Pageable nextPage = PageRequest.of(page, size);
         List<Genre> genreList = getAllEmbeddedGenres(genre);
-        Page<Book> books = bookRepository.findBooksByGenreIn(genreList, nextPage);
-        return books;
+        return bookRepository.findBooksByGenreIn(genreList, nextPage);
     }
 
     public Page<Book> getPageOfBooksByGenreIncludedEmbeddedGenres(Genre genre) {

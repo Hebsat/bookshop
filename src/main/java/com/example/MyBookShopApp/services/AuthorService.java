@@ -1,7 +1,9 @@
 package com.example.MyBookShopApp.services;
 
-import com.example.MyBookShopApp.data.Author;
-import com.example.MyBookShopApp.data.Book;
+import com.example.MyBookShopApp.data.main.Author;
+import com.example.MyBookShopApp.data.main.Book;
+import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
+import com.example.MyBookShopApp.errors.WrongEntityException;
 import com.example.MyBookShopApp.repositories.AuthorRepository;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,10 @@ public class AuthorService {
         this.bookRepository = bookRepository;
     }
 
+    public Author saveAuthor(Author author) {
+        return authorRepository.save(author);
+    }
+
     public Map<String, List<Author>> getAuthorData() {
         Logger.getLogger(AuthorService.class.getName()).info(
                 "getAuthorData");
@@ -51,16 +57,13 @@ public class AuthorService {
         return getPageOfBooksByAuthor(author, defaultPage, defaultSize);
     }
 
-    public Page<Book> getPageOfBooksByAuthor(String slug, int page, int size) {
-        return getPageOfBooksByAuthor(getAuthorBySlug(slug), page, size);
+    public Author getAuthorById(int id) throws BookshopWrongParameterException {
+        return authorRepository.findById(id)
+                .orElseThrow(() -> new BookshopWrongParameterException("Author with the specified id " + id + " does not exist"));
     }
 
-    public Author getAuthorBySlug(String slug) {
-        return authorRepository.findAuthorBySlug(slug);
-    }
-
-    public Author getAuthorById(int id) {
-        Logger.getLogger(AuthorService.class.getName()).info("getAuthorById with id: " + id);
-        return authorRepository.findById(id).get();
+    public Author getAuthorBySlug(String slug) throws WrongEntityException {
+        return authorRepository.findAuthorBySlug(slug)
+                .orElseThrow(() -> new WrongEntityException("Автора с идентификатором " + slug + " не существует"));
     }
 }

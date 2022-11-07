@@ -2,9 +2,13 @@ package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.BooksListDto;
 import com.example.MyBookShopApp.data.SearchQueryDto;
-import com.example.MyBookShopApp.data.Tag;
+import com.example.MyBookShopApp.data.main.Book;
+import com.example.MyBookShopApp.data.main.Tag;
+import com.example.MyBookShopApp.errors.WrongEntityException;
+import com.example.MyBookShopApp.services.CookieService;
 import com.example.MyBookShopApp.services.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,15 +18,17 @@ import org.springframework.web.bind.annotation.*;
 public class TagsController {
 
     private final TagService tagService;
+    private final CookieService cookieService;
 
     @Autowired
-    public TagsController(TagService tagService) {
+    public TagsController(TagService tagService, CookieService cookieService) {
         this.tagService = tagService;
+        this.cookieService = cookieService;
     }
 
     @ModelAttribute("topBarIdentifier")
     public String topBarIdentifier() {
-        return "main";
+        return "genres";
     }
 
     @ModelAttribute("pageHeadDescription")
@@ -35,13 +41,27 @@ public class TagsController {
         return new SearchQueryDto();
     }
 
+    @ModelAttribute("booksInCart")
+    public int booksInCart(@CookieValue(name = "cartContents", required = false) String contents) {
+        return cookieService.getCountOfBooksInCookie(contents);
+    }
+
+    @ModelAttribute("booksInPostponed")
+    public int booksInPostponed(@CookieValue(name = "postponedContents", required = false) String contents) {
+        return cookieService.getCountOfBooksInCookie(contents);
+    }
+
     @GetMapping("/{slug}")
-    public String getTagBooks(@PathVariable String slug, Model model) {
+    public String getTagBooks(@PathVariable String slug, Model model) throws WrongEntityException {
         Tag tag = tagService.getTagBySlug(slug);
+        Page<Book> bookPage = tagService.getPageOfBooksByTag(tag);
+        if (bookPage.getTotalPages() == 1) {
+            model.addAttribute("lastPage", true);
+        }
         model.addAttribute("pageTitle", "tag");
         model.addAttribute("pageTitlePart", tag.getName());
         model.addAttribute("tag", tag);
-        model.addAttribute("books", tagService.getPageOfBooksByTag(slug));
+        model.addAttribute("books", bookPage);
         return "tags/index";
     }
 
@@ -57,7 +77,8 @@ public class TagsController {
     public BooksListDto getTagBooksPage(
             @PathVariable String slug,
             @RequestParam int offset,
-            @RequestParam int limit) {
-        return new BooksListDto(tagService.getPageOfBooksByTag(slug, offset, limit).getContent());
+            @RequestParam int limit) throws WrongEntityException {
+        Tag tag = tagService.getTagBySlug(slug);
+        return new BooksListDto(tagService.getPageOfBooksByTag(tag, offset, limit).getContent());
     }
 }

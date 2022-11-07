@@ -1,6 +1,6 @@
 package com.example.MyBookShopApp.services;
 
-import com.example.MyBookShopApp.data.Book;
+import com.example.MyBookShopApp.data.main.Book;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,9 +22,5 @@ public class SearchService {
         Logger.getLogger(SearchService.class.getName()).info("find <<" + query + ">> with page " + page + " and size " + size);
         Pageable nextPage = PageRequest.of(page, size);
         return bookRepository.findBooksByTitleContaining(query, nextPage);
-    }
-
-    public int getCountOfSearchResult(String query) {
-        return bookRepository.countByTitleContaining(query);
     }
 }

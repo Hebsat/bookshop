@@ -1,7 +1,10 @@
 package com.example.MyBookShopApp.services;
 
-import com.example.MyBookShopApp.data.Book;
-import com.example.MyBookShopApp.data.Tag;
+import com.example.MyBookShopApp.data.main.Book;
+import com.example.MyBookShopApp.data.main.Genre;
+import com.example.MyBookShopApp.data.main.Tag;
+import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
+import com.example.MyBookShopApp.errors.WrongEntityException;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import com.example.MyBookShopApp.repositories.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,22 +41,26 @@ public class TagService {
         return setTagVolumes(tagRepository.findAll());
     }
 
-    public Tag getTagBySlug(String slug) {
+    public Tag getTagBySlug(String slug) throws WrongEntityException {
         Logger.getLogger(TagService.class.getName()).info("getTagBySlug " + slug);
-        return tagRepository.findTagBySlug(slug);
+        return tagRepository.findTagBySlug(slug)
+                .orElseThrow(() -> new WrongEntityException("Тега с идентификатором " + slug + " не существует"));
     }
 
-    public Page<Book> getPageOfBooksByTag(String slug, int page, int size) {
+    public Tag getTagById(int id) throws BookshopWrongParameterException {
+        return tagRepository.findById(id)
+                .orElseThrow(() -> new BookshopWrongParameterException("Author with the specified id " + id + " does not exist"));
+    }
+
+    public Page<Book> getPageOfBooksByTag(Tag tag, int page, int size) {
         Logger.getLogger(TagService.class.getName()).info(
-                "getPageOfBooksByTag " + slug + " with page " + page + " and size " + size);
+                "getPageOfBooksByTag " + tag + " with page " + page + " and size " + size);
         Pageable nextPage = PageRequest.of(page, size);
-        Tag tag = tagRepository.findTagBySlug(slug);
         return bookRepository.findBooksByTagListContains(tag, nextPage);
     }
 
-    public Page<Book> getPageOfBooksByTag(String slug) {
-        Logger.getLogger(TagService.class.getName()).info("getPageOfBooksByTag " + slug);
-        return getPageOfBooksByTag(slug, defaultPage, defaultSize);
+    public Page<Book> getPageOfBooksByTag(Tag tag) {
+        return getPageOfBooksByTag(tag, defaultPage, defaultSize);
     }
 
     private List<Tag> setTagVolumes(List<Tag> tagList) {

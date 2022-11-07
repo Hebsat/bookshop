@@ -42,7 +42,7 @@
         </header>
         <div class="Section">
           <div class="Cards Cards_refresh">
-            <div class="Card" th:each="book : ${bookList}">
+            <div class="Card" th:each="book : ${bookList}" th:remove="tag">
               <div th:replace="~{fragments/common_book_fragment :: bookFragment}"></div>
             </div>
             <div class="Cards-footer Cards-footer_center">
