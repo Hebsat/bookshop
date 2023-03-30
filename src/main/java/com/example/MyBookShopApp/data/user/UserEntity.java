@@ -1,9 +1,11 @@
 package com.example.MyBookShopApp.data.user;
 
+import com.example.MyBookShopApp.data.book.BookRating;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -21,4 +23,6 @@ public class UserEntity {
     private int balance;
     @Column(nullable = false)
     private String name;
+    @OneToMany(mappedBy = "user")
+    private List<BookRating> ratings;
 }

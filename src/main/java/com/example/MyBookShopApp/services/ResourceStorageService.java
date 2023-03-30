@@ -1,14 +1,22 @@
 package com.example.MyBookShopApp.services;
 
+import com.example.MyBookShopApp.api.ApiSimpleResponse;
 import com.example.MyBookShopApp.data.main.Author;
 import com.example.MyBookShopApp.data.main.Book;
 import com.example.MyBookShopApp.data.main.BookFile;
-import com.example.MyBookShopApp.errors.WrongEntityException;
+import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
+import com.example.MyBookShopApp.errors.WrongResultException;
+import com.example.MyBookShopApp.repositories.AuthorRepository;
 import com.example.MyBookShopApp.repositories.BookFileRepository;
+import com.example.MyBookShopApp.repositories.BookRepository;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +27,7 @@ import java.nio.file.Path;
 import java.util.logging.Logger;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceStorageService {
 
     @Value("${bookshop.resources.root}")
@@ -30,16 +39,9 @@ public class ResourceStorageService {
     @Value("${bookshop.resources.book-files}")
     private String bookFilesPath;
 
-    private final BookService bookService;
-    private final AuthorService authorService;
+    private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
     private final BookFileRepository bookFileRepository;
-
-    @Autowired
-    public ResourceStorageService(BookService bookService, AuthorService authorService, BookFileRepository bookFileRepository) {
-        this.bookService = bookService;
-        this.authorService = authorService;
-        this.bookFileRepository = bookFileRepository;
-    }
 
     private String saveNewData(MultipartFile file, String name, Path path) throws IOException {
         String fileName = null;
@@ -56,40 +58,46 @@ public class ResourceStorageService {
         return fileName;
     }
 
-    public void saveNewBookCoverImage(MultipartFile file, String slug) {
+    public ApiSimpleResponse saveNewBookCoverImage(MultipartFile file, String slug) {
         String filePath = "/data" + booksPath + "/";
         try {
             filePath += saveNewData(file, slug, Path.of(rootPath, booksPath));
-            Book book = bookService.getBookBySlug(slug);
+            Book book = bookRepository.findBySlug(slug).orElseThrow(() -> new WrongResultException("Такой книги не существует!"));
             book.setImage(filePath);
-            bookService.saveBook(book);
-        } catch (IOException | WrongEntityException e) {
+            bookRepository.save(book);
+        } catch (IOException | WrongResultException e) {
             Logger.getLogger(this.getClass().getName()).info("saveNewBookCoverImage - " + e.getMessage());
         }
+        return new ApiSimpleResponse(true);
     }
 
-    public void saveNewAuthorPhoto(MultipartFile file, String slug) {
+    public ApiSimpleResponse saveNewAuthorPhoto(MultipartFile file, String slug) {
         String filePath = "/data" + authorsPath + "/";
         try {
             filePath += saveNewData(file, slug, Path.of(rootPath, authorsPath));
-            Author author = authorService.getAuthorBySlug(slug);
+            Author author = authorRepository.findAuthorBySlug(slug).orElseThrow(() -> new WrongResultException("Такого автора не существует!"));
             author.setPhoto(filePath);
-            authorService.saveAuthor(author);
-        } catch (IOException | WrongEntityException e) {
+            authorRepository.save(author);
+        } catch (IOException | WrongResultException e) {
             Logger.getLogger(this.getClass().getName()).info("saveNewAuthorPhoto - " + e.getMessage());
         }
+        return new ApiSimpleResponse(true);
     }
 
-    public BookFile getBookFileByHash(String hash) {
-        Logger.getLogger(this.getClass().getName()).info("getBookFileByHash with hash: " + hash);
-        return bookFileRepository.findBookFileByHash(hash);
+    public ResponseEntity<ByteArrayResource> getBookFile(String hash) throws BookshopWrongParameterException {
+        BookFile bookFile = bookFileRepository.findBookFileByHash(hash)
+                .orElseThrow(() -> new BookshopWrongParameterException("Файла с указанным хешем " + hash + " не существует!"));
+        Path path = Path.of(bookFile.getPath());
+        MediaType mediaType = getBookFileMime(bookFile);
+        byte[] data = getBookFileByteArray(bookFile);
+        return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + path.getFileName().toString())
+                .contentType(mediaType)
+                .contentLength(data.length)
+                .body(new ByteArrayResource(data));
     }
 
-    public Path getBookFilePath(BookFile bookFile) {
-        return Path.of(bookFile.getPath());
-    }
-
-    public MediaType getBookFileMime(BookFile bookFile) {
+    private MediaType getBookFileMime(BookFile bookFile) {
         String mimeType = URLConnection.guessContentTypeFromName(Path.of(bookFile.getPath()).getFileName().toString());
         if (mimeType != null) {
             return MediaType.parseMediaType(mimeType);
@@ -97,7 +105,7 @@ public class ResourceStorageService {
         return MediaType.APPLICATION_OCTET_STREAM;
     }
 
-    public byte[] getBookFileByteArray(BookFile bookFile) {
+    private byte[] getBookFileByteArray(BookFile bookFile) {
         Path path = Path.of(rootPath, bookFilesPath, bookFile.getPath());
         byte[] fileBytes = null;
         try {

@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.data.main;
 
+import com.example.MyBookShopApp.data.book.BookRating;
 import com.fasterxml.jackson.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -61,6 +62,18 @@ public class Book {
     @OneToMany(mappedBy = "book")
     @JsonIgnore
     private List<BookFile> bookFileList;
+    @OneToMany(mappedBy = "book")
+    @JsonIgnore
+    private List<BookRating> ratings;
+    @JsonIgnore
+    private List<Boolean> ratingStars() {
+        List<Boolean> stars = new ArrayList<>(5);
+        int starsCount = ratings.isEmpty() ? 0 : (int) Math.round((double) (ratings.stream().mapToInt(BookRating::getRating).sum() / ratings.size()));
+        for (int i = 0; i < 5; i++) {
+            stars.add(i < starsCount);
+        }
+         return stars;
+    }
 
     @JsonProperty
     private String discountPrice() {
@@ -73,9 +86,9 @@ public class Book {
                 "id=" + id +
                 ", publicationDate=" + publicationDate +
                 ", isBestseller=" + bestseller +
-                ", title='" + title + '\'' +
-                ", price='" + price + '\'' +
-                ", discount=" + discount +
+                ", title='" + title +
+                "', price='" + price +
+                "', discount=" + discount +
                 ", authorList=" + Arrays.toString(authorList.stream().map(Author::getName).toArray()) +
                 ", tagList=" + Arrays.toString(tagList.stream().map(Tag::getName).toArray()) +
                 ", genre=" + genre.getName() +

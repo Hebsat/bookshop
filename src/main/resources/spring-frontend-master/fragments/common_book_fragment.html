@@ -23,7 +23,7 @@
     <strong class="Card-title">
       <a href="/books/slug.html" th:href="@{/books/{bookSlug} (bookSlug=${book.slug})}" th:text="${book.title}">Book title</a>
     </strong>
-    <div class="Card-description" th:text="${book.authors()}">Author's name
+    <div class="Card-description" th:text="${book.authors}">Author's name
     </div>
     <div class="Card-cost">
       <span class="Card-priceOld"

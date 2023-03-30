@@ -1,22 +1,18 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.data.SearchQueryDto;
+import com.example.MyBookShopApp.api.SearchQueryDto;
 import com.example.MyBookShopApp.services.CookieService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/documents")
+@RequiredArgsConstructor
 public class DocumentsController {
 
     private final CookieService cookieService;
-
-    @Autowired
-    public DocumentsController(CookieService cookieService) {
-        this.cookieService = cookieService;
-    }
 
     @ModelAttribute("topBarIdentifier")
     public String topBarIdentifier() {

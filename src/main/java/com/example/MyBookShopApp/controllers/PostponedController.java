@@ -1,6 +1,6 @@
 //package com.example.MyBookShopApp.controllers;
 //
-//import com.example.MyBookShopApp.data.SearchQueryDto;
+//import com.example.MyBookShopApp.api.SearchQueryDto;
 //import com.example.MyBookShopApp.services.CookieService;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Controller;

@@ -1,22 +1,18 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.data.SearchQueryDto;
+import com.example.MyBookShopApp.api.SearchQueryDto;
 import com.example.MyBookShopApp.services.CookieService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
+@RequiredArgsConstructor
 public class AuthorizeController {
 
     private final CookieService cookieService;
-
-    @Autowired
-    public AuthorizeController(CookieService cookieService) {
-        this.cookieService = cookieService;
-    }
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {

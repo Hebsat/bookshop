@@ -1,24 +1,30 @@
 package com.example.MyBookShopApp.services;
 
+import com.example.MyBookShopApp.api.BooksListDto;
+import com.example.MyBookShopApp.api.TagDto;
 import com.example.MyBookShopApp.data.main.Book;
-import com.example.MyBookShopApp.data.main.Genre;
 import com.example.MyBookShopApp.data.main.Tag;
 import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
-import com.example.MyBookShopApp.errors.WrongEntityException;
+import com.example.MyBookShopApp.services.mappers.BookMapper;
+import com.example.MyBookShopApp.services.mappers.TagMapper;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import com.example.MyBookShopApp.repositories.TagRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TagService {
 
     @Value("${bookshop.default.page}")
@@ -29,38 +35,48 @@ public class TagService {
 
     private final TagRepository tagRepository;
     private final BookRepository bookRepository;
+    private final TagMapper tagMapper;
+    private final BookMapper bookMapper;
 
-    @Autowired
-    public TagService(TagRepository tagRepository, BookRepository bookRepository) {
-        this.tagRepository = tagRepository;
-        this.bookRepository = bookRepository;
-    }
-
-    public List<Tag> getTags() {
+    public List<TagDto> getTags() {
         Logger.getLogger(TagService.class.getName()).info("getTags");
-        return setTagVolumes(tagRepository.findAll());
+        return setTagVolumes(tagRepository.findAll()).stream().map(tagMapper::convertTagToTagDto).collect(Collectors.toList());
     }
 
-    public Tag getTagBySlug(String slug) throws WrongEntityException {
-        Logger.getLogger(TagService.class.getName()).info("getTagBySlug " + slug);
-        return tagRepository.findTagBySlug(slug)
-                .orElseThrow(() -> new WrongEntityException("Тега с идентификатором " + slug + " не существует"));
+    public String getFirstPageOfBooksByTag(String slug, Model model) {
+        Optional<Tag> optionalTag = tagRepository.findTagBySlug(slug);
+        model.addAttribute("topBarIdentifier", "genres");
+        model.addAttribute("pageTitle", "tag");
+        if (optionalTag.isEmpty()) {
+            model.addAttribute("error", "Тега с идентификатором " + slug + " не существует");
+            return "/errors/404";
+        }
+        Page<Book> books = getPageOfBooksByTag(optionalTag.get(), defaultPage, defaultSize);
+        if (books.getTotalPages() == 1) {
+            model.addAttribute("lastPage", true);
+        }
+        model.addAttribute("pageTitlePart", optionalTag.get().getName());
+        model.addAttribute("tag", tagMapper.convertTagToTagDto(optionalTag.get()));
+        model.addAttribute("books", books.getContent());
+        return "tags/index";
     }
 
-    public Tag getTagById(int id) throws BookshopWrongParameterException {
-        return tagRepository.findById(id)
-                .orElseThrow(() -> new BookshopWrongParameterException("Author with the specified id " + id + " does not exist"));
+    public BooksListDto getNextPageOfBooksByTag(String slug, int page, int size) throws BookshopWrongParameterException {
+        Tag tag = tagRepository.findTagBySlug(slug)
+                .orElseThrow(() -> new BookshopWrongParameterException("Тега с идентификатором " + slug + " не существует"));
+        Page<Book> books = getPageOfBooksByTag(tag, page, size);
+        return BooksListDto.builder()
+                .totalPages(books.getTotalPages())
+                .count((int) books.getTotalElements())
+                .books(books.getContent().stream().map(bookMapper::convertBookToBookDtoLight).collect(Collectors.toList()))
+                .build();
     }
 
-    public Page<Book> getPageOfBooksByTag(Tag tag, int page, int size) {
+    private Page<Book> getPageOfBooksByTag(Tag tag, int page, int size) {
         Logger.getLogger(TagService.class.getName()).info(
-                "getPageOfBooksByTag " + tag + " with page " + page + " and size " + size);
+                "getPageOfBooksByTag " + tag.getName() + " with page " + page + " and size " + size);
         Pageable nextPage = PageRequest.of(page, size);
         return bookRepository.findBooksByTagListContains(tag, nextPage);
-    }
-
-    public Page<Book> getPageOfBooksByTag(Tag tag) {
-        return getPageOfBooksByTag(tag, defaultPage, defaultSize);
     }
 
     private List<Tag> setTagVolumes(List<Tag> tagList) {

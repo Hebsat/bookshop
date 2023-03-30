@@ -1,12 +1,12 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.data.BooksListDto;
-import com.example.MyBookShopApp.data.SearchQueryDto;
-import com.example.MyBookShopApp.data.main.Genre;
-import com.example.MyBookShopApp.errors.WrongEntityException;
+import com.example.MyBookShopApp.api.BooksListDto;
+import com.example.MyBookShopApp.api.GenreDto;
+import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
 import com.example.MyBookShopApp.services.CookieService;
 import com.example.MyBookShopApp.services.GenreService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +15,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/genres")
+@RequiredArgsConstructor
 public class GenresController {
 
     private final GenreService genreService;
     private final CookieService cookieService;
-
-    @Autowired
-    public GenresController(GenreService genreService, CookieService cookieService) {
-        this.genreService = genreService;
-        this.cookieService = cookieService;
-    }
 
     @ModelAttribute("topBarIdentifier")
     public String topBarIdentifier() {
@@ -57,7 +52,7 @@ public class GenresController {
     }
 
     @ModelAttribute("genreList")
-    public List<Genre> genreEntityList() {
+    public List<GenreDto> genreEntityList() {
         return genreService.getGenres();
     }
 
@@ -67,14 +62,9 @@ public class GenresController {
     }
 
     @GetMapping("/{slug}")
-    public String getGenre(@PathVariable String slug, Model model) throws WrongEntityException {
-        Genre genre = genreService.getGenreBySlug(slug);
-        model.addAttribute("genre", genre);
-        model.addAttribute("pageTitle", "genre");
-        model.addAttribute("pageTitlePart", genre.getName());
-        model.addAttribute("bookList", genreService.getPageOfBooksByGenreIncludedEmbeddedGenres(genre).getContent());
-        model.addAttribute("breadCrumbs", genreService.getGenreBreadCrumbs(genre));
-        return "genres/slug";
+    public String getGenre(@PathVariable String slug, Model model) {
+
+        return genreService.getGenreBySlug(slug, model);
     }
 
     @GetMapping("/{slug}/page")
@@ -82,8 +72,8 @@ public class GenresController {
     public BooksListDto getGenreBooksPage(
             @PathVariable String slug,
             @RequestParam int offset,
-            @RequestParam int limit) throws WrongEntityException {
-        Genre genre = genreService.getGenreBySlug(slug);
-        return new BooksListDto(genreService.getPageOfBooksByGenreIncludedEmbeddedGenres(genre, offset, limit).getContent());
+            @RequestParam int limit) throws BookshopWrongParameterException {
+
+        return genreService.getNextPageOfBooksByGenre(slug, offset, limit);
     }
 }

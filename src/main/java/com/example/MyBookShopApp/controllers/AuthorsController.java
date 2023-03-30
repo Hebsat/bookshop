@@ -1,33 +1,24 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.data.main.Author;
-import com.example.MyBookShopApp.data.SearchQueryDto;
-import com.example.MyBookShopApp.errors.WrongEntityException;
+import com.example.MyBookShopApp.api.ApiSimpleResponse;
+import com.example.MyBookShopApp.api.SearchQueryDto;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.CookieService;
 import com.example.MyBookShopApp.services.ResourceStorageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.logging.Logger;
-
 @Controller
 @RequestMapping("/authors")
+@RequiredArgsConstructor
 public class AuthorsController {
 
     private final AuthorService authorService;
     private final ResourceStorageService resourceStorageService;
     private final CookieService cookieService;
-
-    @Autowired
-    public AuthorsController(AuthorService authorService, ResourceStorageService resourceStorageService, CookieService cookieService) {
-        this.authorService = authorService;
-        this.resourceStorageService = resourceStorageService;
-        this.cookieService = cookieService;
-    }
 
     @ModelAttribute("topBarIdentifier")
     public String topBarIdentifier() {
@@ -58,20 +49,15 @@ public class AuthorsController {
     }
 
     @GetMapping("/{slug}")
-    public String getAuthor(@PathVariable String slug, Model model) throws WrongEntityException {
-        Logger.getLogger(AuthorsController.class.getName()).info("request author with slug: " + slug);
-        Author author = authorService.getAuthorBySlug(slug);
-        model.addAttribute("author", author);
-        model.addAttribute("pageTitle", "author");
-        model.addAttribute("pageTitlePart", author.getName());
-        model.addAttribute("pageHeadDescription",
-                author.getName() + ". Биография: " + author.getDescription().substring(0, 100) + "...");
-        return "authors/slug";
+    public String getAuthor(@PathVariable String slug, Model model) {
+
+        return authorService.getAuthorBySlug(slug, model);
     }
 
     @PostMapping("/{slug}/img/save")
-    public String saveNewAuthorImage(@PathVariable String slug, @RequestParam MultipartFile file) {
-        resourceStorageService.saveNewAuthorPhoto(file, slug);
-        return "redirect:/authors/" + slug;
+    @ResponseBody
+    public ApiSimpleResponse saveNewAuthorImage(@PathVariable String slug, @RequestParam MultipartFile file) {
+
+        return resourceStorageService.saveNewAuthorPhoto(file, slug);
     }
 }

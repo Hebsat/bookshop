@@ -1,30 +1,22 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.data.BooksListDto;
-import com.example.MyBookShopApp.data.SearchQueryDto;
-import com.example.MyBookShopApp.data.main.Book;
-import com.example.MyBookShopApp.data.main.Tag;
-import com.example.MyBookShopApp.errors.WrongEntityException;
+import com.example.MyBookShopApp.api.BooksListDto;
+import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
 import com.example.MyBookShopApp.services.CookieService;
 import com.example.MyBookShopApp.services.TagService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/books/tag")
+@RequiredArgsConstructor
 public class TagsController {
 
     private final TagService tagService;
     private final CookieService cookieService;
-
-    @Autowired
-    public TagsController(TagService tagService, CookieService cookieService) {
-        this.tagService = tagService;
-        this.cookieService = cookieService;
-    }
 
     @ModelAttribute("topBarIdentifier")
     public String topBarIdentifier() {
@@ -52,17 +44,9 @@ public class TagsController {
     }
 
     @GetMapping("/{slug}")
-    public String getTagBooks(@PathVariable String slug, Model model) throws WrongEntityException {
-        Tag tag = tagService.getTagBySlug(slug);
-        Page<Book> bookPage = tagService.getPageOfBooksByTag(tag);
-        if (bookPage.getTotalPages() == 1) {
-            model.addAttribute("lastPage", true);
-        }
-        model.addAttribute("pageTitle", "tag");
-        model.addAttribute("pageTitlePart", tag.getName());
-        model.addAttribute("tag", tag);
-        model.addAttribute("books", bookPage);
-        return "tags/index";
+    public String getTagBooks(@PathVariable String slug, Model model) {
+
+        return tagService.getFirstPageOfBooksByTag(slug, model);
     }
 
     @GetMapping("/all")
@@ -77,8 +61,8 @@ public class TagsController {
     public BooksListDto getTagBooksPage(
             @PathVariable String slug,
             @RequestParam int offset,
-            @RequestParam int limit) throws WrongEntityException {
-        Tag tag = tagService.getTagBySlug(slug);
-        return new BooksListDto(tagService.getPageOfBooksByTag(tag, offset, limit).getContent());
+            @RequestParam int limit) throws BookshopWrongParameterException {
+
+        return tagService.getNextPageOfBooksByTag(slug, offset, limit);
     }
 }

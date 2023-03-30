@@ -1,12 +1,12 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.data.main.Book;
-import com.example.MyBookShopApp.data.SearchQueryDto;
-import com.example.MyBookShopApp.data.main.Tag;
+import com.example.MyBookShopApp.api.BookDto;
+import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.api.TagDto;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.CookieService;
 import com.example.MyBookShopApp.services.TagService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,36 +15,30 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class MainPageController {
 
     private final BookService bookService;
     private final TagService tagService;
     private final CookieService cookieService;
 
-    @Autowired
-    public MainPageController(BookService bookService, TagService tagService, CookieService cookieService) {
-        this.bookService = bookService;
-        this.tagService = tagService;
-        this.cookieService = cookieService;
-    }
-
     @ModelAttribute("recommendedBooks")
-    public List<Book> recommendedBooks() {
-        return bookService.getPageOfRecommendedBooks().getContent();
+    public List<BookDto> recommendedBooks() {
+        return bookService.getPageOfRecommendedBooks().getBooks();
     }
 
     @ModelAttribute("recentBooks")
-    public List<Book> recentBooks() {
-        return bookService.getPageOfRecentBooks().getContent();
+    public List<BookDto> recentBooks() {
+        return bookService.getPageOfRecentBooks().getBooks();
     }
 
     @ModelAttribute("popularBooks")
-    public List<Book> popularBooks() {
-        return bookService.getPageOfPopularBooks().getContent();
+    public List<BookDto> popularBooks() {
+        return bookService.getPageOfPopularBooks().getBooks();
     }
 
     @ModelAttribute("tags")
-    public List<Tag> tags() {
+    public List<TagDto> tags() {
         return tagService.getTags();
     }
 

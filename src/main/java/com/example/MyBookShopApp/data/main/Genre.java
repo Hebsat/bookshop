@@ -37,8 +37,4 @@ public class Genre {
                 ", embeddedGenreList=" + Arrays.toString(embeddedGenreList.stream().map(Genre::getName).toArray()) +
                 '}';
     }
-
-    public boolean getEmbeddedEmbedded() {
-        return embeddedGenreList.stream().anyMatch(g -> !g.getEmbeddedGenreList().isEmpty());
-    }
 }

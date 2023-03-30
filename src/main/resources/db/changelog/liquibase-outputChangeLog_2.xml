@@ -29,4 +29,21 @@
         <addUniqueConstraint columnNames="hash" constraintName="book_files_hash" tableName="book_files"/>
     </changeSet>
 
+    <changeSet id="2.4" author="admin">
+        <createTable tableName="book_ratings">
+            <column autoIncrement="true" name="id" type="SERIAL">
+                <constraints primaryKey="true" primaryKeyName="books_ratings_pkey"/>
+            </column>
+            <column name="book_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
