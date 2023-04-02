@@ -75,6 +75,12 @@ public class GenreService {
         return getPageOfBooksByGenreIncludedEmbeddedGenres(genre, page, size);
     }
 
+    public BooksListDto getPageOfBooksByGenreId(int id, int page, int size) throws BookshopWrongParameterException {
+        Genre genre = genreRepository.findById(id)
+                .orElseThrow(() -> new BookshopWrongParameterException("Жанра с идентификатором " + id + " не существует"));
+        return getPageOfBooksByGenreIncludedEmbeddedGenres(genre, page, size);
+    }
+
     private void addBooksFromEmbeddedGenres(Genre genre) {
         if (genre.getEmbeddedGenreList().isEmpty()) {
             genre.setBookListIncludedBooksOfEmbeddedGenres(genre.getBookList());

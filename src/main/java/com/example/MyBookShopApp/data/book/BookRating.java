@@ -1,8 +1,7 @@
 package com.example.MyBookShopApp.data.book;
 
 import com.example.MyBookShopApp.data.main.Book;
-import com.example.MyBookShopApp.data.user.UserEntity;
-import lombok.Data;
+import com.example.MyBookShopApp.data.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,11 +23,11 @@ public class BookRating {
     private Book book;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private UserEntity user;
+    private User user;
     @Column(nullable = false)
     private int rating;
 
-    public BookRating(Book book, UserEntity user) {
+    public BookRating(Book book, User user) {
         this.book = book;
         this.user = user;
     }

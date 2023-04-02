@@ -72,6 +72,17 @@ public class TagService {
                 .build();
     }
 
+    public BooksListDto getPageOfBooksByTagId(int id, int page, int size) throws BookshopWrongParameterException {
+        Tag tag = tagRepository.findById(id)
+                .orElseThrow(() -> new BookshopWrongParameterException("Тега с идентификатором " + id + " не существует"));
+        Page<Book> books = getPageOfBooksByTag(tag, page, size);
+        return BooksListDto.builder()
+                .totalPages(books.getTotalPages())
+                .count((int) books.getTotalElements())
+                .books(books.getContent().stream().map(bookMapper::convertBookToBookDtoLight).collect(Collectors.toList()))
+                .build();
+    }
+
     private Page<Book> getPageOfBooksByTag(Tag tag, int page, int size) {
         Logger.getLogger(TagService.class.getName()).info(
                 "getPageOfBooksByTag " + tag.getName() + " with page " + page + " and size " + size);

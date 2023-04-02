@@ -9,6 +9,7 @@ public class TagMapper {
 
     public TagDto convertTagToTagDto(Tag tag) {
         return TagDto.builder()
+                .id(tag.getId())
                 .name(tag.getName())
                 .slug(tag.getSlug())
                 .volume(tag.getVolume())

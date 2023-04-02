@@ -1,18 +1,21 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.api.BookDto;
+import com.example.MyBookShopApp.api.BooksListDto;
 import com.example.MyBookShopApp.config.SpringfoxConfig;
+import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.GenreService;
 import com.example.MyBookShopApp.services.TagService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/books")
-@PropertySource("/descriptions/api.properties")
 @Api(tags = {SpringfoxConfig.TAG_1})
 @RequiredArgsConstructor
 public class ApiBooksController {
@@ -22,77 +25,84 @@ public class ApiBooksController {
     private final GenreService genreService;
     private final TagService tagService;
 
-//    @GetMapping("/recommended")
-//    @ApiOperation(value = "${bookshop.value.recommended}", notes = "${bookshop.notes.recommended}")
-//    public ResponseEntity<BooksListDto> getRecommendedBooks(
-//            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
-//            @ApiParam("${bookshop.param.size}") @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) {
-//        return ResponseEntity.status(HttpStatus.OK).body(new BooksListDto(bookService.getPageOfRecommendedBooks(offset, limit).getContent()));
-//    }
+    @GetMapping("/recommended")
+    @ApiOperation(value = "Method to get list of recommended books",
+            notes = "the list of recommended for current user books if authorized or any user if not authorized")
+    public BooksListDto getRecommendedBooks(
+            @ApiParam("page number of the book list")
+            @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("the number of displayed books in each page")
+            @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) throws BookshopWrongParameterException {
 
-//    @GetMapping("/recent")
-//    @ApiOperation(value = "${bookshop.value.recent}", notes = "${bookshop.notes.recent}")
-//    public ResponseEntity<BooksListDto> getRecentBooks(
-//            @ApiParam(value = "${bookshop.param.from}", example = "25-11-2020")  @RequestParam(name = "from", required = false) String from,
-//            @ApiParam(value = "${bookshop.param.to}", example = "25-11-2020")    @RequestParam(name = "to", required = false) String to,
-//            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
-//            @ApiParam("${bookshop.param.size}") @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) {
-//        if (from != null && to != null) {
-//            return ResponseEntity.status(HttpStatus.OK)
-//                    .body(new BooksListDto(bookService.getPageOfRecentBooks(from, offset, limit, to).getContent()));
-//        } else if (to != null) {
-//            return ResponseEntity.status(HttpStatus.OK)
-//                    .body(new BooksListDto(bookService.getPageOfRecentBooks(offset, limit, to).getContent()));
-//        } else if (from != null) {
-//            return ResponseEntity.status(HttpStatus.OK)
-//                    .body(new BooksListDto(bookService.getPageOfRecentBooks(from, offset, limit).getContent()));
-//        } else {
-//            return ResponseEntity.status(HttpStatus.OK)
-//                    .body(new BooksListDto(bookService.getPageOfRecentBooks(offset, limit).getContent()));
-//        }
-//    }
+        return bookService.setLinksToBooks(bookService.getPageOfRecommendedBooks(offset, limit));
+    }
 
-//    @GetMapping("/popular")
-//    @ApiOperation(value = "${bookshop.value.popular}", notes = "${bookshop.notes.popular}")
-//    public ResponseEntity<BooksListDto> getPopularBooks(
-//            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
-//            @ApiParam("${bookshop.param.size}") @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) {
-//        return ResponseEntity.status(HttpStatus.OK).body(new BooksListDto(bookService.getPageOfPopularBooks(offset, limit)));
-//    }
+    @GetMapping("/recent")
+    @ApiOperation(value = "Method to get list of recent books",
+            notes = "the list of books published after \"from\" date and before \"to\" date if that parameters are specified and before current time if not")
+    public BooksListDto getRecentBooks(
+            @ApiParam(value = "date in format dd-MM-yyyy from which the list of books is displayed", example = "25-11-2020")
+            @RequestParam(name = "from", required = false) String from,
+            @ApiParam(value = "date in format dd-MM-yyyy by which the list of books is displayed", example = "25-11-2020")
+            @RequestParam(name = "to", required = false) String to,
+            @ApiParam("page number of the book list")
+            @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("the number of displayed books in each page")
+            @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) throws BookshopWrongParameterException {
 
-//    @GetMapping("/genre/{id}")
-//    @ApiOperation(value = "${bookshop.value.genres}", notes = "${bookshop.notes.genres}")
-//    public ResponseEntity<BooksListDto> getBooksByGenre(
-//            @ApiParam(value = "${bookshop.param.id}", example = "1") @PathVariable int id,
-//            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
-//            @ApiParam("${bookshop.param.size}") @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) throws BookshopWrongParameterException {
-//        Genre genre = genreService.getGenreById(id);
-//        Page<Book> bookPage = genreService.getPageOfBooksByGenre(genre, offset, limit);
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(new BooksListDto((int) bookPage.getTotalElements(), bookPage.getContent()));
-//    }
+        return bookService.setLinksToBooks(bookService.getPageOfRecentBooks(from, offset, limit, to));
+    }
 
-//    @GetMapping("/author/{id}")
-//    @ApiOperation(value = "${bookshop.value.authors}", notes = "${bookshop.notes.authors}")
-//    public ResponseEntity<BooksListDto> getBooksByAuthor(
-//            @ApiParam(value = "${bookshop.param.id}", example = "1") @PathVariable int id,
-//            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
-//            @ApiParam("${bookshop.param.size}") @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) throws BookshopWrongParameterException {
-//        Author author = authorService.getAuthorById(id);
-//        Page<Book> bookPage = authorService.getPageOfBooksByAuthor(author, offset, limit);
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(new BooksListDto((int) bookPage.getTotalElements(), bookPage.getContent()));
-//    }
+    @GetMapping("/popular")
+    @ApiOperation(value = "Method to get list of popular books", notes = "the list of the most popular books in bookshop")
+    public BooksListDto getPopularBooks(
+            @ApiParam("page number of the book list")
+            @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("the number of displayed books in each page")
+            @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) throws BookshopWrongParameterException {
 
-//    @GetMapping("/tag/{id}")
-//    @ApiOperation(value = "${bookshop.value.tags}", notes = "${bookshop.notes.tags}")
-//    public ResponseEntity<BooksListDto> getBooksByTag(
-//            @ApiParam(value = "${bookshop.param.id}", example = "1") @PathVariable int id,
-//            @ApiParam("${bookshop.param.page}") @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
-//            @ApiParam("${bookshop.param.size}") @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) throws BookshopWrongParameterException {
-//        Tag tag = tagService.getTagById(id);
-//        Page<Book> bookPage = tagService.getPageOfBooksByTag(tag, offset, limit);
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(new BooksListDto((int) bookPage.getTotalElements(), bookPage.getContent()));
-//    }
+        return bookService.setLinksToBooks(bookService.getPageOfPopularBooks(offset, limit));
+    }
+
+    @GetMapping("/genre/{id}")
+    @ApiOperation(value = "Method to get list books by genre with chosen id", notes = "all books of genre with current id")
+    public BooksListDto getBooksByGenre(
+            @ApiParam(value = "the number of required entity", example = "1") @PathVariable int id,
+            @ApiParam("page number of the book list")
+            @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("the number of displayed books in each page")
+            @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) throws BookshopWrongParameterException {
+
+        return bookService.setLinksToBooks(genreService.getPageOfBooksByGenreId(id, offset, limit));
+    }
+
+    @GetMapping("/author/{id}")
+    @ApiOperation(value = "Method to get list books by author with chosen id", notes = "all books of author with current id")
+    public BooksListDto getBooksByAuthor(
+            @ApiParam(value = "the number of required entity", example = "1") @PathVariable int id,
+            @ApiParam("page number of the book list")
+            @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("the number of displayed books in each page")
+            @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) throws BookshopWrongParameterException {
+
+        return bookService.setLinksToBooks(authorService.getPageOfBooksByAuthorId(id, offset, limit));
+    }
+
+    @GetMapping("/tag/{id}")
+    @ApiOperation(value = "Method to get list books by tag with chosen id", notes = "$all books of tag with current id")
+    public BooksListDto getBooksByTag(
+            @ApiParam(value = "the number of required entity", example = "1") @PathVariable int id,
+            @ApiParam("page number of the book list")
+            @RequestParam(defaultValue = "${bookshop.default.page}", required = false) int offset,
+            @ApiParam("the number of displayed books in each page")
+            @RequestParam(defaultValue = "${bookshop.default.size}", required = false) int limit) throws BookshopWrongParameterException {
+
+        return bookService.setLinksToBooks(tagService.getPageOfBooksByTagId(id, offset, limit));
+    }
+
+    @GetMapping("/{id}")
+    public BookDto getBook(@PathVariable Integer id) throws BookshopWrongParameterException {
+
+        return bookService.getBookById(id);
+    }
 }

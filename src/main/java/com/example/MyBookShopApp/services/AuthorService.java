@@ -53,6 +53,14 @@ public class AuthorService {
         return getBookListDto(author, page, size);
     }
 
+    public BooksListDto getPageOfBooksByAuthorId(int id, int page, int size) throws BookshopWrongParameterException {
+        Logger.getLogger(AuthorService.class.getName()).info(
+                "getPageOfBooksByAuthorId: with id " + id + " with page " + page + " and size " + size);
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new BookshopWrongParameterException("Автора с идентификатором " + id + " не существует"));
+        return getBookListDto(author, page, size);
+    }
+
     public String getFirstPageOfBooksByAuthor(String slug, Model model) {
         Optional<Author> author = authorRepository.findAuthorBySlug(slug);
         model.addAttribute("topBarIdentifier", "genres");

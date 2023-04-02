@@ -3,7 +3,7 @@ package com.example.MyBookShopApp.services.mappers;
 import com.example.MyBookShopApp.api.BookRatingDto;
 import com.example.MyBookShopApp.data.book.BookRating;
 import com.example.MyBookShopApp.data.main.Book;
-import com.example.MyBookShopApp.data.user.UserEntity;
+import com.example.MyBookShopApp.data.user.User;
 import com.example.MyBookShopApp.repositories.BookRatingRepository;
 import com.example.MyBookShopApp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class BookRatingMapper {
     }
 
     private List<Boolean> getMyStars(Book book) {
-        UserEntity user = userRepository.findById(1).orElse(null);
+        User user = userRepository.findById(1).orElse(null);
         if (user == null) return getRatingStars(0);
         BookRating bookRating = bookRatingRepository.findBookRatingByBookAndUser(book, user).orElse(new BookRating());
         return getRatingStars(bookRating.getRating());

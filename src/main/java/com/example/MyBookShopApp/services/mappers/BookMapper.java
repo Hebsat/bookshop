@@ -1,6 +1,8 @@
 package com.example.MyBookShopApp.services.mappers;
 
+import com.example.MyBookShopApp.api.AuthorDto;
 import com.example.MyBookShopApp.api.BookDto;
+import com.example.MyBookShopApp.api.GenreDto;
 import com.example.MyBookShopApp.data.main.Author;
 import com.example.MyBookShopApp.data.main.Book;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class BookMapper {
                 .discount(book.getDiscount())
                 .slug(book.getSlug())
                 .image(book.getImage())
+                .publicationDate(book.getPublicationDate())
                 .discountPrice(getDiscountPrice(book.getPrice(), book.getDiscount()))
                 .build();
     }
@@ -46,8 +49,9 @@ public class BookMapper {
 
     public BookDto convertBookToBookDtoFull(Book book) {
         BookDto bookDto = convertBookToBookDtoLight(book);
-        bookDto.setAuthorList(book.getAuthorList());
+        bookDto.setAuthorList(book.getAuthorList().stream().map(author -> AuthorDto.builder().id(author.getId()).build()).collect(Collectors.toList()));
         bookDto.setDescription(book.getDescription());
+        bookDto.setGenre(GenreDto.builder().id(book.getGenre().getId()).build());
         bookDto.setTagList(book.getTagList().stream().map(tagMapper::convertTagToTagDto).collect(Collectors.toList()));
         bookDto.setBookFileList(book.getBookFileList().stream().map(bookFileMapper::convertBookFileToBookFileDto).collect(Collectors.toList()));
         bookDto.setRatings(bookRatingMapper.getBookRatingDto(book));

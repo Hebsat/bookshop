@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 public class GenreDto {
 
+    private int id;
     private String slug;
     private String name;
     private List<GenreDto> embeddedGenreList;

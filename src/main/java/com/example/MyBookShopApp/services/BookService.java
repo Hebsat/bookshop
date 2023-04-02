@@ -1,15 +1,16 @@
 package com.example.MyBookShopApp.services;
 
-import com.example.MyBookShopApp.api.ApiSimpleResponse;
-import com.example.MyBookShopApp.api.BooksListDto;
+import com.example.MyBookShopApp.api.*;
+import com.example.MyBookShopApp.controllers.ApiBooksController;
 import com.example.MyBookShopApp.data.book.BookRating;
 import com.example.MyBookShopApp.data.main.Book;
-import com.example.MyBookShopApp.data.user.UserEntity;
+import com.example.MyBookShopApp.data.user.User;
+import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
 import com.example.MyBookShopApp.errors.WrongResultException;
-import com.example.MyBookShopApp.services.mappers.BookMapper;
 import com.example.MyBookShopApp.repositories.BookRatingRepository;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import com.example.MyBookShopApp.repositories.UserRepository;
+import com.example.MyBookShopApp.services.mappers.BookMapper;
 import com.example.MyBookShopApp.services.util.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +59,12 @@ public class BookService {
 
      public BooksListDto getPageOfRecommendedBooks() {
           return getPageOfRecommendedBooks(defaultPage, defaultSize);
+     }
+     public BooksListDto setLinksToBooks(BooksListDto booksListDto) throws BookshopWrongParameterException {
+          for (BookDto bookDto : booksListDto.getBooks()){
+               bookDto.add(linkTo(methodOn(ApiBooksController.class).getBook(bookDto.getId())).withSelfRel());
+          }
+          return booksListDto;
      }
 
      private BooksListDto getPageOfRecentBooks(LocalDateTime from, int page, int size, LocalDateTime to) {
@@ -113,7 +123,7 @@ public class BookService {
 
      public ApiSimpleResponse rateBook(String slug, int rating) throws WrongResultException {
           Logger.getLogger(BookService.class.getName()).info("rateBook with slug: " + slug + " on " + rating);
-          UserEntity user = userRepository.findById(1).orElseThrow(() -> new WrongResultException("User with id are not found"));
+          User user = userRepository.findById(1).orElseThrow(() -> new WrongResultException("User with id are not found"));
           Book book = bookRepository.findBySlug(slug).orElseThrow(() -> new WrongResultException("Book with slug " + slug + " are not found"));
           BookRating bookRating = bookRatingRepository.findBookRatingByBookAndUser(book, user).orElse(new BookRating(book, user));
           bookRating.setRating(rating);
@@ -128,4 +138,21 @@ public class BookService {
      private LocalDateTime getToTime() {
           return LocalDateTime.now();
      }
+
+    public BookDto getBookById(Integer id) throws BookshopWrongParameterException {
+          Book book = bookRepository.findById(id).orElseThrow(() -> new BookshopWrongParameterException("Книги с id " + id + " не существует"));
+          return setLinksToBookDto(bookMapper.convertBookToBookDtoFull(book));
+    }
+
+    private BookDto setLinksToBookDto(BookDto bookDto) throws BookshopWrongParameterException {
+          bookDto.add(linkTo(methodOn(ApiBooksController.class).getBook(bookDto.getId())).withSelfRel());
+          for (AuthorDto authorDto : bookDto.getAuthorList()) {
+               bookDto.add(linkTo(methodOn(ApiBooksController.class).getBooksByAuthor(authorDto.getId(), 0, 10)).withRel("authors"));
+          }
+         for (TagDto tagDto : bookDto.getTagList()) {
+              bookDto.add(linkTo(methodOn(ApiBooksController.class).getBooksByAuthor(tagDto.getId(), 0, 10)).withRel("tags"));
+         }
+         bookDto.add(linkTo(methodOn(ApiBooksController.class).getBooksByGenre(bookDto.getGenre().getId(), 0, 10)).withRel("genre"));
+          return bookDto;
+    }
 }
