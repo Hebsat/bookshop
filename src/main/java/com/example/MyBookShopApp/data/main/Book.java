@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.data.main;
 
 import com.example.MyBookShopApp.data.book.BookRating;
+import com.example.MyBookShopApp.data.book.review.BookReview;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 
@@ -44,6 +45,8 @@ public class Book {
     private List<BookFile> bookFileList;
     @OneToMany(mappedBy = "book")
     private List<BookRating> ratings;
+    @OneToMany(mappedBy = "book")
+    private List<BookReview> bookReviews;
 
     @Override
     public String toString() {

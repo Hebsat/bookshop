@@ -1,6 +1,8 @@
 package com.example.MyBookShopApp.data.user;
 
 import com.example.MyBookShopApp.data.book.BookRating;
+import com.example.MyBookShopApp.data.book.review.BookReview;
+import com.example.MyBookShopApp.data.book.review.BookReviewLike;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -25,4 +27,8 @@ public class User {
     private String name;
     @OneToMany(mappedBy = "user")
     private List<BookRating> ratings;
+    @OneToMany(mappedBy = "user")
+    private List<BookReview> bookReviews;
+    @OneToMany(mappedBy = "user")
+    private List<BookReviewLike> reviewLikes;
 }

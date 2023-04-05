@@ -33,16 +33,17 @@ public class CookieService {
     }
 
     public String getCartAndPostponedMainPage(HttpServletRequest request, String cartContent, String postponedContent, Model model) throws SomethingWrongException {
-        CookieContentDto params = getRequestValues(request, cartContent, postponedContent);
-        model.addAttribute("pageTitle", params.getType());
-        if (validateCookie(params.getContent())) {
-            List<BookDto> booksFromCookie = getBooksFromCookie(params.getContent());
+        CookieContentDto cookie = getRequestValues(request, cartContent, postponedContent);
+        model.addAttribute("pageTitle", cookie.getType());
+        if (validateCookie(cookie.getContent())) {
+            List<BookDto> booksFromCookie = getBooksFromCookie(cookie.getContent());
             model.addAttribute("books", booksFromCookie);
             model.addAttribute("priceOld", booksFromCookie.stream().mapToDouble(BookDto::getPrice).sum());
             model.addAttribute("price", booksFromCookie.stream()
                     .mapToDouble(book -> book.getPrice() - (book.getPrice() * book.getDiscount() / 100)).sum());
+            model.addAttribute("allBooks", String.join(", ", readCookie(cookie.getContent())));
         }
-        return params.getType();
+        return cookie.getType();
     }
 
     public ApiSimpleResponse changeBookStatus(List<String> bookSlugs, String status, HttpServletResponse response, String cartContent, String postponedContent) {

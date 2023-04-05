@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div class="Comment-appeal" th:fragment="reviewLikesFragment">
+    <button class="btn btn_white btn_like" data-btntype="check" data-check="false" data-btnradio="two2" data-likeid="1111" th:attr="data-likeid=${review.id}">
+      <span class="btn-icon">
+        <img src="/assets/img/icons/comment/like.svg" alt="like.svg"/>
+      </span>
+      <span class="btn-content" th:text="${review.likes}">200</span>
+    </button>
+    <button class="btn btn_white btn_dislike" data-btntype="check" data-check="false" data-btnradio="two2" data-likeid="1111" th:attr="data-likeid=${review.id}">
+      <span class="btn-icon">
+        <img src="/assets/img/icons/comment/dislike.svg" alt="dislike.svg"/>
+      </span>
+      <span class="btn-content" th:text="${review.dislikes}">100</span>
+    </button>
+  </div>
+</body>
+</html>

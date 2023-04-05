@@ -53,6 +53,8 @@ public class BookDto extends RepresentationModel<BookDto> {
     private List<BookFileDto> bookFileList;
     @JsonIgnore
     private BookRatingDto ratings;
+    @JsonIgnore
+    private List<BookReviewDto> reviews;
 
     @Override
     public String toString() {

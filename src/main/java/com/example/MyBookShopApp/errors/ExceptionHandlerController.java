@@ -24,7 +24,7 @@ public class ExceptionHandlerController {
     @ExceptionHandler(WrongResultException.class)
     public ResponseEntity<ApiSimpleResponse> handleWrongResultException(Exception e) {
         Logger.getLogger(this.getClass().getName()).warning(e.getLocalizedMessage());
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiSimpleResponse(false));
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiSimpleResponse(false, e.getMessage()));
     }
 
     @ExceptionHandler(SomethingWrongException.class)

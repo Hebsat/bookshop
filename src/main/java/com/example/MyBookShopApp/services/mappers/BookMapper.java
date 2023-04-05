@@ -3,6 +3,7 @@ package com.example.MyBookShopApp.services.mappers;
 import com.example.MyBookShopApp.api.AuthorDto;
 import com.example.MyBookShopApp.api.BookDto;
 import com.example.MyBookShopApp.api.GenreDto;
+import com.example.MyBookShopApp.data.book.review.BookReview;
 import com.example.MyBookShopApp.data.main.Author;
 import com.example.MyBookShopApp.data.main.Book;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class BookMapper {
     private final TagMapper tagMapper;
     private final BookFileMapper bookFileMapper;
     private final BookRatingMapper bookRatingMapper;
+    private final BookReviewMapper bookReviewMapper;
 
     public BookDto convertBookToBookDtoLight(Book book) {
         return BookDto.builder()
@@ -47,14 +49,23 @@ public class BookMapper {
         return new DecimalFormat("#.00").format(price - price * discount / 100);
     }
 
+    private AuthorDto getAuthor(Author author) {
+        return AuthorDto.builder()
+                .id(author.getId())
+                .name(author.getName())
+                .slug(author.getSlug())
+                .build();
+    }
+
     public BookDto convertBookToBookDtoFull(Book book) {
         BookDto bookDto = convertBookToBookDtoLight(book);
-        bookDto.setAuthorList(book.getAuthorList().stream().map(author -> AuthorDto.builder().id(author.getId()).build()).collect(Collectors.toList()));
+        bookDto.setAuthorList(book.getAuthorList().stream().map(this::getAuthor).collect(Collectors.toList()));
         bookDto.setDescription(book.getDescription());
         bookDto.setGenre(GenreDto.builder().id(book.getGenre().getId()).build());
         bookDto.setTagList(book.getTagList().stream().map(tagMapper::convertTagToTagDto).collect(Collectors.toList()));
         bookDto.setBookFileList(book.getBookFileList().stream().map(bookFileMapper::convertBookFileToBookFileDto).collect(Collectors.toList()));
         bookDto.setRatings(bookRatingMapper.getBookRatingDto(book));
+        bookDto.setReviews(book.getBookReviews().stream().sorted(Comparator.comparing(BookReview::getTime).reversed()).map(bookReviewMapper::convertBookReviewToDto).collect(Collectors.toList()));
         return bookDto;
     }
 }

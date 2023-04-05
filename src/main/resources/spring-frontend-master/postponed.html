@@ -109,8 +109,7 @@
             </div>
             <div class="Cart-block" th:if="not ${#lists.isEmpty(books)}">
               <button class="btn btn_success btn_md Cart-buyAll" data-sendstatus="CART" data-bookid="[1111, 1122, 1133]"
-                      th:attr="data-bookid='api/changeBookStatus'"
-              >Купить все
+                      th:attr="data-bookid=${allBooks}">Купить все
               </button>
             </div>
           </div>

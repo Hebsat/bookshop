@@ -5,10 +5,7 @@ import com.example.MyBookShopApp.api.BooksListDto;
 import com.example.MyBookShopApp.api.SearchQueryDto;
 import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
 import com.example.MyBookShopApp.errors.WrongResultException;
-import com.example.MyBookShopApp.services.AuthorService;
-import com.example.MyBookShopApp.services.BookService;
-import com.example.MyBookShopApp.services.CookieService;
-import com.example.MyBookShopApp.services.ResourceStorageService;
+import com.example.MyBookShopApp.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +23,7 @@ public class BooksController {
     private final AuthorService authorService;
     private final ResourceStorageService resourceStorageService;
     private final CookieService cookieService;
+    private final ReviewService reviewService;
 
     @ModelAttribute("searchQueryDto")
     public SearchQueryDto searchQueryDto() {
@@ -139,5 +137,19 @@ public class BooksController {
     public ApiSimpleResponse rateBook(@RequestParam String bookId, @RequestParam int value) throws WrongResultException {
 
         return bookService.rateBook(bookId, value);
+    }
+
+    @PostMapping("/api/rateBookReview")
+    @ResponseBody
+    public ApiSimpleResponse rateBookReview(@RequestParam(name = "reviewid") Integer reviewId, @RequestParam Short value) throws BookshopWrongParameterException {
+
+        return reviewService.setLikeReview(reviewId, value);
+    }
+
+    @PostMapping("/api/bookReview")
+    @ResponseBody
+    public ApiSimpleResponse reviewBook(@RequestParam String bookId, @RequestParam String text) throws BookshopWrongParameterException, WrongResultException {
+
+        return reviewService.setReview(bookId, text);
     }
 }

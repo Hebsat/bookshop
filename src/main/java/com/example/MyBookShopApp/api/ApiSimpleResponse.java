@@ -10,4 +10,9 @@ import lombok.NoArgsConstructor;
 public class ApiSimpleResponse {
 
     private boolean result;
+    private String error;
+
+    public ApiSimpleResponse(boolean result) {
+        this.result = result;
+    }
 }
