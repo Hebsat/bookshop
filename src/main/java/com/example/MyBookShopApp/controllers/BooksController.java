@@ -11,12 +11,17 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Validator;
+import javax.validation.constraints.Size;
 
 @Controller
 @RequestMapping("/books")
 @RequiredArgsConstructor
+@Validated
 public class BooksController {
 
     private final BookService bookService;
@@ -24,6 +29,7 @@ public class BooksController {
     private final ResourceStorageService resourceStorageService;
     private final CookieService cookieService;
     private final ReviewService reviewService;
+    private final Validator validator;
 
     @ModelAttribute("searchQueryDto")
     public SearchQueryDto searchQueryDto() {
@@ -148,7 +154,7 @@ public class BooksController {
 
     @PostMapping("/api/bookReview")
     @ResponseBody
-    public ApiSimpleResponse reviewBook(@RequestParam String bookId, @RequestParam String text) throws BookshopWrongParameterException, WrongResultException {
+    public ApiSimpleResponse reviewBook(@RequestParam String bookId, @RequestParam @Size(min = 30) String text) throws BookshopWrongParameterException, WrongResultException {
 
         return reviewService.setReview(bookId, text);
     }

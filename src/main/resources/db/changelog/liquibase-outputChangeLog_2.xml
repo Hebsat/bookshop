@@ -46,4 +46,24 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="2.5" author="admin">
+        <modifyDataType columnName="time" tableName="book_review_like" newDataType="TIMESTAMP WITH TIME ZONE"/>
+    </changeSet>
+
+    <changeSet id="2.6" author="admin">
+        <modifyDataType columnName="reg_time" tableName="users" newDataType="TIMESTAMP WITH TIME ZONE"/>
+    </changeSet>
+
+    <changeSet id="2.7" author="admin">
+        <modifyDataType columnName="pub_date" tableName="books" newDataType="TIMESTAMP WITH TIME ZONE"/>
+    </changeSet>
+
+    <changeSet id="2.8" author="admin">
+        <modifyDataType columnName="time" tableName="book_review" newDataType="TIMESTAMP WITH TIME ZONE"/>
+    </changeSet>
+
+    <changeSet id="2.9" author="admin">
+        <modifyDataType columnName="time" tableName="book2user" newDataType="TIMESTAMP WITH TIME ZONE"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -19,7 +19,7 @@ public class User {
     private int id;
     @Column(nullable = false)
     private String hash;
-    @Column(nullable = false, columnDefinition = "TIMESTAMP", name = "reg_time")
+    @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "reg_time")
     private LocalDateTime regTime;
     @Column(nullable = false)
     private int balance;

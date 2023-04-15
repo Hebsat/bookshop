@@ -20,7 +20,7 @@ public class BookReviewLike {
     @ManyToOne
     @JoinColumn(nullable = false, name = "user_id", referencedColumnName = "id")
     private User user;
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private LocalDateTime time;
     @Column(nullable = false, columnDefinition = "SMALLINT")
     private short value;

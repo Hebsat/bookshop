@@ -18,7 +18,7 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "pub_date", nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "pub_date", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private LocalDateTime publicationDate;
     @Column(name = "is_bestseller", columnDefinition = "SMALLINT", nullable = false)
     @Type(type = "org.hibernate.type.NumericBooleanType")

@@ -13,7 +13,7 @@ public class Book2UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private LocalDateTime time;
     @Column(nullable = false, name = "type_id")
     private int typeId;

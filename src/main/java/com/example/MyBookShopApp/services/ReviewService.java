@@ -13,6 +13,7 @@ import com.example.MyBookShopApp.repositories.BookReviewRepository;
 import com.example.MyBookShopApp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class ReviewService {
     private final BookReviewLikeRepository bookReviewLikeRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public ApiSimpleResponse setLikeReview(Integer reviewId, Short likeValue) throws BookshopWrongParameterException {
         User user = userRepository.findById(1).orElseThrow(() -> new BookshopWrongParameterException("Пользователь не существует"));
         BookReview bookReview = bookReviewRepository.findById(reviewId).orElseThrow(() -> new BookshopWrongParameterException("Ревью не существует"));
@@ -49,6 +51,7 @@ public class ReviewService {
         return new ApiSimpleResponse(true);
     }
 
+    @Transactional
     public ApiSimpleResponse setReview(String slug, String text) throws BookshopWrongParameterException, WrongResultException {
         if (text.length() < 30) throw new WrongResultException("Отзыв слишком короткий. Напишите, пожалуйста, более развернутый отзыв");
         User user = userRepository.findById(1).orElseThrow(() -> new BookshopWrongParameterException("Пользователь не существует"));
