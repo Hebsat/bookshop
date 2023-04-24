@@ -1,18 +1,24 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.api.*;
 import com.example.MyBookShopApp.services.CookieService;
+import com.example.MyBookShopApp.services.RegistrationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequiredArgsConstructor
 public class AuthorizeController {
 
     private final CookieService cookieService;
+    private final RegistrationService registrationService;
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
@@ -39,8 +45,67 @@ public class AuthorizeController {
         return cookieService.getCountOfBooksInCookie(contents);
     }
 
+    @ModelAttribute("currentUser")
+    public UserDto currentUser() {
+        return registrationService.getCurrentUser();
+    }
+
     @GetMapping("/signin")
-    public String mainPage() {
+    public String signIn() {
         return "signin";
+    }
+
+    @GetMapping("/signup")
+    public String signUp(Model model) {
+        model.addAttribute("regForm", new RegistrationForm());
+        return "signup";
+    }
+
+    @PostMapping("/requestContactConfirmation")
+    @ResponseBody
+    public ApiSimpleResponse handleRequestContactConfirmation(@RequestBody ContactConfirmationPayload contactConfirmationPayload) {
+        return new ApiSimpleResponse(true);
+    }
+
+    @PostMapping("/approveContact")
+    @ResponseBody
+    public ApiSimpleResponse handleApproveContact(@RequestBody ContactConfirmationPayload contactConfirmationPayload) {
+        return new ApiSimpleResponse(true);
+    }
+
+    @PostMapping("/reg")
+//    @ResponseBody
+    public String handleUserRegistration(RegistrationForm registrationForm, Model model) {
+        model.addAttribute("regOk", registrationService.registerNewUser(registrationForm));
+        return "signin";
+    }
+
+    @PostMapping("/login")
+    @ResponseBody
+    public ApiSimpleResponse handleLogin(@RequestBody ContactConfirmationPayload contactConfirmationPayload) {
+        return registrationService.login(contactConfirmationPayload);
+    }
+
+    @GetMapping("/my")
+    public String handleMy() {
+        return "my";
+    }
+
+    @GetMapping("/profile")
+    public String handleProfile() {
+        return "profile";
+    }
+
+    @GetMapping("/logout")
+    public String handleLogout(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        SecurityContextHolder.clearContext();
+        if (session != null) {
+            session.invalidate();
+        }
+        for (Cookie cookie : request.getCookies()) {
+            cookie.setMaxAge(0);
+        }
+        return "redirect:/";
     }
 }

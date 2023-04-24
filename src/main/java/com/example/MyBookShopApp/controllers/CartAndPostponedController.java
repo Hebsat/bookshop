@@ -2,8 +2,10 @@ package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.api.ApiSimpleResponse;
 import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.api.UserDto;
 import com.example.MyBookShopApp.errors.SomethingWrongException;
 import com.example.MyBookShopApp.services.CookieService;
+import com.example.MyBookShopApp.services.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,7 @@ import java.util.List;
 public class CartAndPostponedController {
 
     private final CookieService cookieService;
+    private final RegistrationService registrationService;
 
     @ModelAttribute("pageTitlePart")
     public String pageTitlePart() {
@@ -45,6 +48,11 @@ public class CartAndPostponedController {
         return cookieService.getCountOfBooksInCookie(contents);
     }
 
+    @ModelAttribute("currentUser")
+    public UserDto currentUser() {
+        return registrationService.getCurrentUser();
+    }
+
     @GetMapping({"/cart", "/postponed"})
     public String cartAndPostponedMainPage(
             HttpServletRequest request,
@@ -58,7 +66,6 @@ public class CartAndPostponedController {
     @PostMapping
     @ResponseBody
     public ApiSimpleResponse changeBookStatus(
-//            @PathVariable String slug,
             @RequestParam List<String> booksIds,
             @RequestParam String status,
             @CookieValue(name = "cartContents", required = false) String cartContents,
@@ -67,30 +74,6 @@ public class CartAndPostponedController {
 
         return cookieService.changeBookStatus(booksIds, status, response,cartContents, postponedContents);
     }
-
-//    @PostMapping({"/cart/remove/{slug}", "/postponed/remove/{slug}"})
-//    @ResponseBody
-//    private ApiSimpleResponse removeBook(
-//            @PathVariable String slug,
-//            @CookieValue(name = "cartContents", required = false) String cartContents,
-//            @CookieValue(name = "postponedContents", required = false) String postponedContents,
-//            HttpServletResponse response, HttpServletRequest request) {
-//
-//        cookieService.removeBookFromCookie(response, request, slug, cartContents, postponedContents);
-//        return new ApiSimpleResponse(true);
-//    }
-//
-//    @PostMapping({"/cart/add/{slug}", "/postponed/add/{slug}"})
-//    @ResponseBody
-//    private ApiSimpleResponse addBook(
-//            @PathVariable String slug,
-//            @CookieValue(name = "cartContents", required = false) String cartContents,
-//            @CookieValue(name = "postponedContents", required = false) String postponedContents,
-//            HttpServletResponse response, HttpServletRequest request) {
-//
-//        cookieService.addBookToCookie(response, request, slug, cartContents, postponedContents);
-//        return new ApiSimpleResponse(true);
-//    }
 
     @PostMapping("/api/changeBookStatus")
     @ResponseBody

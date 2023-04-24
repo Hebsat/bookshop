@@ -2,8 +2,10 @@ package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.api.ApiSimpleResponse;
 import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.api.UserDto;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.CookieService;
+import com.example.MyBookShopApp.services.RegistrationService;
 import com.example.MyBookShopApp.services.ResourceStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ public class AuthorsController {
     private final AuthorService authorService;
     private final ResourceStorageService resourceStorageService;
     private final CookieService cookieService;
+    private final RegistrationService registrationService;
 
     @ModelAttribute("topBarIdentifier")
     public String topBarIdentifier() {
@@ -38,6 +41,11 @@ public class AuthorsController {
     @ModelAttribute("booksInPostponed")
     public int booksInPostponed(@CookieValue(name = "postponedContents", required = false) String contents) {
         return cookieService.getCountOfBooksInCookie(contents);
+    }
+
+    @ModelAttribute("currentUser")
+    public UserDto currentUser() {
+        return registrationService.getCurrentUser();
     }
 
     @GetMapping

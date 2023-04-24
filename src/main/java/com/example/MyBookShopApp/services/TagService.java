@@ -57,7 +57,7 @@ public class TagService {
         }
         model.addAttribute("pageTitlePart", optionalTag.get().getName());
         model.addAttribute("tag", tagMapper.convertTagToTagDto(optionalTag.get()));
-        model.addAttribute("books", books.getContent());
+        model.addAttribute("books", books.getContent().stream().map(bookMapper::convertBookToBookDtoLight).collect(Collectors.toList()));
         return "tags/index";
     }
 

@@ -3,6 +3,7 @@ package com.example.MyBookShopApp.controllers;
 import com.example.MyBookShopApp.api.ApiSimpleResponse;
 import com.example.MyBookShopApp.api.BooksListDto;
 import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.api.UserDto;
 import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
 import com.example.MyBookShopApp.errors.WrongResultException;
 import com.example.MyBookShopApp.services.*;
@@ -15,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Validator;
 import javax.validation.constraints.Size;
 
 @Controller
@@ -29,7 +29,7 @@ public class BooksController {
     private final ResourceStorageService resourceStorageService;
     private final CookieService cookieService;
     private final ReviewService reviewService;
-    private final Validator validator;
+    private final RegistrationService registrationService;
 
     @ModelAttribute("searchQueryDto")
     public SearchQueryDto searchQueryDto() {
@@ -44,6 +44,11 @@ public class BooksController {
     @ModelAttribute("booksInPostponed")
     public int booksInPostponed(@CookieValue(name = "postponedContents", required = false) String contents) {
         return cookieService.getCountOfBooksInCookie(contents);
+    }
+
+    @ModelAttribute("currentUser")
+    public UserDto currentUser() {
+        return registrationService.getCurrentUser();
     }
 
     @GetMapping("/recent")

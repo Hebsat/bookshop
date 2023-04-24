@@ -2,7 +2,9 @@ package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.api.BooksListDto;
 import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.api.UserDto;
 import com.example.MyBookShopApp.services.CookieService;
+import com.example.MyBookShopApp.services.RegistrationService;
 import com.example.MyBookShopApp.services.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ public class SearchController {
 
     private final SearchService searchService;
     private final CookieService cookieService;
+    private final RegistrationService registrationService;
 
     @ModelAttribute("pageTitle")
     public String pageTitle() {
@@ -41,6 +44,11 @@ public class SearchController {
     @ModelAttribute("booksInPostponed")
     public int booksInPostponed(@CookieValue(name = "postponedContents", required = false) String contents) {
         return cookieService.getCountOfBooksInCookie(contents);
+    }
+
+    @ModelAttribute("currentUser")
+    public UserDto currentUser() {
+        return registrationService.getCurrentUser();
     }
 
     @GetMapping({"/search", "/search/{query}"})

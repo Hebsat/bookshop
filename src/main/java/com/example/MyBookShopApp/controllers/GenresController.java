@@ -3,9 +3,11 @@ package com.example.MyBookShopApp.controllers;
 import com.example.MyBookShopApp.api.BooksListDto;
 import com.example.MyBookShopApp.api.GenreDto;
 import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.api.UserDto;
 import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
 import com.example.MyBookShopApp.services.CookieService;
 import com.example.MyBookShopApp.services.GenreService;
+import com.example.MyBookShopApp.services.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,7 @@ public class GenresController {
 
     private final GenreService genreService;
     private final CookieService cookieService;
+    private final RegistrationService registrationService;
 
     @ModelAttribute("topBarIdentifier")
     public String topBarIdentifier() {
@@ -54,6 +57,11 @@ public class GenresController {
     @ModelAttribute("genreList")
     public List<GenreDto> genreEntityList() {
         return genreService.getGenres();
+    }
+
+    @ModelAttribute("currentUser")
+    public UserDto currentUser() {
+        return registrationService.getCurrentUser();
     }
 
     @GetMapping

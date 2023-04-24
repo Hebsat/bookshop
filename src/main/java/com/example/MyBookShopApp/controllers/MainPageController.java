@@ -3,8 +3,10 @@ package com.example.MyBookShopApp.controllers;
 import com.example.MyBookShopApp.api.BookDto;
 import com.example.MyBookShopApp.api.SearchQueryDto;
 import com.example.MyBookShopApp.api.TagDto;
+import com.example.MyBookShopApp.api.UserDto;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.CookieService;
+import com.example.MyBookShopApp.services.RegistrationService;
 import com.example.MyBookShopApp.services.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,7 @@ public class MainPageController {
     private final BookService bookService;
     private final TagService tagService;
     private final CookieService cookieService;
+    private final RegistrationService registrationService;
 
     @ModelAttribute("recommendedBooks")
     public List<BookDto> recommendedBooks() {
@@ -70,6 +73,11 @@ public class MainPageController {
     @ModelAttribute("booksInPostponed")
     public int booksInPostponed(@CookieValue(name = "postponedContents", required = false) String contents) {
         return cookieService.getCountOfBooksInCookie(contents);
+    }
+
+    @ModelAttribute("currentUser")
+    public UserDto currentUser() {
+        return registrationService.getCurrentUser();
     }
 
     @GetMapping("/")

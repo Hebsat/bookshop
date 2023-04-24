@@ -25,6 +25,11 @@ public class User {
     private int balance;
     @Column(nullable = false)
     private String name;
+    @Column(unique = true)
+    private String email;
+    @Column(unique = true)
+    private String phone;
+    private String password;
     @OneToMany(mappedBy = "user")
     private List<BookRating> ratings;
     @OneToMany(mappedBy = "user")
