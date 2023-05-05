@@ -159,7 +159,8 @@ public class BooksController {
 
     @PostMapping("/api/bookReview")
     @ResponseBody
-    public ApiSimpleResponse reviewBook(@RequestParam String bookId, @RequestParam @Size(min = 30) String text) throws BookshopWrongParameterException, WrongResultException {
+    public ApiSimpleResponse reviewBook(@RequestParam String bookId, @RequestParam @Size(min = 30,
+            message = "Отзыв слишком короткий. Напишите, пожалуйста, более развернутый отзыв") String text) throws BookshopWrongParameterException {
 
         return reviewService.setReview(bookId, text);
     }

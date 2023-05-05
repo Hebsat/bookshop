@@ -6,7 +6,6 @@ import com.example.MyBookShopApp.data.book.review.BookReviewLike;
 import com.example.MyBookShopApp.data.main.Book;
 import com.example.MyBookShopApp.data.user.User;
 import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
-import com.example.MyBookShopApp.errors.WrongResultException;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import com.example.MyBookShopApp.repositories.BookReviewLikeRepository;
 import com.example.MyBookShopApp.repositories.BookReviewRepository;
@@ -52,8 +51,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public ApiSimpleResponse setReview(String slug, String text) throws BookshopWrongParameterException, WrongResultException {
-        if (text.length() < 30) throw new WrongResultException("Отзыв слишком короткий. Напишите, пожалуйста, более развернутый отзыв");
+    public ApiSimpleResponse setReview(String slug, String text) throws BookshopWrongParameterException {
         User user = userRepository.findById(1).orElseThrow(() -> new BookshopWrongParameterException("Пользователь не существует"));
         Book book = bookRepository.findBySlug(slug).orElseThrow(() -> new BookshopWrongParameterException("Книга не существует"));
         Optional<BookReview> optionalBookReview = bookReviewRepository.findBookReviewByBookAndUser(book, user);
