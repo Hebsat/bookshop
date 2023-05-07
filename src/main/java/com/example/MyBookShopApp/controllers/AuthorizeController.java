@@ -4,14 +4,12 @@ import com.example.MyBookShopApp.api.*;
 import com.example.MyBookShopApp.services.CookieService;
 import com.example.MyBookShopApp.services.RegistrationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequiredArgsConstructor
@@ -82,8 +80,10 @@ public class AuthorizeController {
 
     @PostMapping("/login")
     @ResponseBody
-    public ApiSimpleResponse handleLogin(@RequestBody ContactConfirmationPayload contactConfirmationPayload) {
-        return registrationService.login(contactConfirmationPayload);
+    public ApiSimpleResponse handleLogin(@RequestBody ContactConfirmationPayload contactConfirmationPayload, HttpServletResponse response) {
+        Cookie cookie = new Cookie("token", registrationService.jwtLogin(contactConfirmationPayload));
+        response.addCookie(cookie);
+        return new ApiSimpleResponse(true);
     }
 
     @GetMapping("/my")
@@ -94,18 +94,5 @@ public class AuthorizeController {
     @GetMapping("/profile")
     public String handleProfile() {
         return "profile";
-    }
-
-    @GetMapping("/logout")
-    public String handleLogout(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        SecurityContextHolder.clearContext();
-        if (session != null) {
-            session.invalidate();
-        }
-        for (Cookie cookie : request.getCookies()) {
-            cookie.setMaxAge(0);
-        }
-        return "redirect:/";
     }
 }

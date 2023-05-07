@@ -7,11 +7,12 @@ import com.example.MyBookShopApp.api.UserDto;
 import com.example.MyBookShopApp.data.user.User;
 import com.example.MyBookShopApp.repositories.UserRepository;
 import com.example.MyBookShopApp.security.BookStoreUserDetails;
+import com.example.MyBookShopApp.security.BookstoreUserDetailsService;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class RegistrationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final BookstoreUserDetailsService bookstoreUserDetailsService;
+    private final JWTUtil jwtUtil;
 
     public boolean registerNewUser(RegistrationForm registrationForm) {
         if (userRepository.findUserByEmail(registrationForm.getEmail()).isEmpty()) {
@@ -47,6 +50,12 @@ public class RegistrationService {
                 contactConfirmationPayload.getContact(), contactConfirmationPayload.getCode()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return new ApiSimpleResponse(true);
+    }
+
+    public String jwtLogin(ContactConfirmationPayload contactConfirmationPayload) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(contactConfirmationPayload.getContact(), contactConfirmationPayload.getCode()));
+        BookStoreUserDetails bookStoreUserDetails = (BookStoreUserDetails) bookstoreUserDetailsService.loadUserByUsername(contactConfirmationPayload.getContact());
+        return jwtUtil.generateToken(bookStoreUserDetails);
     }
 
     public UserDto getCurrentUser() {
