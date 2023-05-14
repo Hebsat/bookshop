@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.api.ApiSimpleResponse;
+import com.example.MyBookShopApp.api.ChangeBookStatusRequest;
 import com.example.MyBookShopApp.api.SearchQueryDto;
 import com.example.MyBookShopApp.api.UserDto;
 import com.example.MyBookShopApp.errors.SomethingWrongException;
@@ -66,13 +67,12 @@ public class CartAndPostponedController {
     @PostMapping
     @ResponseBody
     public ApiSimpleResponse changeBookStatus(
-            @RequestParam List<String> booksIds,
-            @RequestParam String status,
+            @RequestBody ChangeBookStatusRequest changeBookStatusRequest,
             @CookieValue(name = "cartContents", required = false) String cartContents,
             @CookieValue(name = "postponedContents", required = false) String postponedContents,
             HttpServletResponse response) {
 
-        return cookieService.changeBookStatus(booksIds, status, response,cartContents, postponedContents);
+        return cookieService.changeBookStatus(changeBookStatusRequest.getBooksIds(), changeBookStatusRequest.getStatus(), response,cartContents, postponedContents);
     }
 
     @PostMapping("/api/changeBookStatus")

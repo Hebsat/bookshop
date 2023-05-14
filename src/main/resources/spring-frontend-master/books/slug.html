@@ -150,14 +150,14 @@
                 <!--    +Amount._product-->
                 <div class="ProductCard-cartElement">
                   <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" data-bookid="[1111]"
-                          th:attr="data-bookid=${book.slug}" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="Отложена">
+                          th:attr="data-bookid='['+${book.slug}+']'" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="Отложена">
                     <span class="btn-icon"><img src="/assets/img/icons/heart.svg" alt="heart.svg"/></span>
                     <span class="btn-content" th:text="#{bookshop.names.book_page.postpone}">Отложить</span>
                   </button>
                 </div>
                 <div class="ProductCard-cartElement">
                   <button class="btn btn_primary btn_outline" data-sendstatus="CART" data-bookid="[1111]"
-                          th:attr="data-bookid=${book.slug}" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="В корзине">
+                          th:attr="data-bookid='['+${book.slug}+']'" data-btntype="check" data-btnradio="buyblock" data-check="false" data-alttext="В корзине">
                     <span class="btn-icon"><img src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/></span>
                     <span class="btn-content" th:text="#{bookshop.names.book_page.buy}">Купить</span>
                   </button>
