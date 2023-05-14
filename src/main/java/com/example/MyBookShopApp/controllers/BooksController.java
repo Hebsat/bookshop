@@ -1,6 +1,9 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.api.*;
+import com.example.MyBookShopApp.api.ApiSimpleResponse;
+import com.example.MyBookShopApp.api.BooksListDto;
+import com.example.MyBookShopApp.api.SearchQueryDto;
+import com.example.MyBookShopApp.api.UserDto;
 import com.example.MyBookShopApp.errors.BookshopWrongParameterException;
 import com.example.MyBookShopApp.errors.WrongResultException;
 import com.example.MyBookShopApp.services.*;
@@ -142,9 +145,9 @@ public class BooksController {
 
     @PostMapping("api/rateBook")
     @ResponseBody
-    public ApiSimpleResponse rateBook(@RequestBody RateBookRequest rateBookRequest) throws WrongResultException {
+    public ApiSimpleResponse rateBook(@RequestParam String bookId, @RequestParam int value) throws WrongResultException {
 
-        return bookService.rateBook(rateBookRequest.getBookId(), rateBookRequest.getValue());
+        return bookService.rateBook(bookId, value);
     }
 
     @PostMapping("/api/rateBookReview")
